@@ -27,7 +27,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Email</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100  rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Enter your email"
               value={email}
               onChangeText={setEmail}
@@ -40,7 +40,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Password</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100 rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Enter your password"
               value={password}
               onChangeText={setPassword}

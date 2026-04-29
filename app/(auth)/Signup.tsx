@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -28,7 +28,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Username</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100 rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Enter your username"
               value={username}
               onChangeText={setUsername}
@@ -39,7 +39,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Email</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100 rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Enter your email"
               value={email}
               onChangeText={setEmail}
@@ -52,7 +52,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Password</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100 rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Enter your password"
               value={password}
               onChangeText={setPassword}
@@ -63,7 +63,7 @@ export default function Login() {
           <View className='mb-3'>
             <Text className="text-md font-medium text-text mb-1">Confirm Password</Text>
             <TextInput
-              className="px-4 py-3 bg-accent-100 border border-accent-100 rounded-xl text-base focus:border-accent-500 focus:outline-none"
+              className="text-field"
               placeholder="Confirm your password"
               value={confPassword}
               onChangeText={setConfPassword}

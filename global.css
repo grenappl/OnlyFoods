@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer utilities {
+@layer utilities {
     .text-field {
-        @apply px-4 py-3 bg-accent-200 border border-gray-200 rounded-xl text-base focus:border-accent focus:outline-none
+        @apply px-4 py-3 bg-accent-100 border border-accent-100  rounded-xl text-base focus:border-accent-500 focus:outline-none
     }
-} */
+}
