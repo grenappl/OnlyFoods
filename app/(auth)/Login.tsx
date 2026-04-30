@@ -3,13 +3,23 @@ import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import useAuth from '@/hooks/useAuth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setAuth } = useAuth()
 
   const handleLogin = () => {
     // Placeholder for login logic
+    setAuth({
+      user: {
+        id: '123',
+        name: 'Bob',
+        email: email
+      },
+      accessToken: 'fff'
+    })
     router.replace('/Discover')
   };
 

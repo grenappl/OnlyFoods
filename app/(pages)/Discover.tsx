@@ -2,8 +2,8 @@ import '@/global.css';
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import RecipeCard from '@/components/RecipeCard';
-// import { ActionButtons } from '@/components/ActionButtons';
 import recipes from '@/utils/Recipes';
+import { Heart, X } from 'lucide-react-native';
 
 interface Recipe {
   id: number;
@@ -56,49 +56,51 @@ export default function DiscoverPage() {
   };
 
   return (
-    <View className="flex-1">
-      {/* Card area */}
-      <View className="flex-1 items-center justify-center px-4 overflow-hidden">
-        {currentIndex < recipes.length ? (
-          <View className="w-full" style={{ aspectRatio: 3 / 4.5 }}>
-            {recipes.slice(currentIndex, currentIndex + 2).map((recipe, index) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onSwipe={index === 0 ? handleSwipe : () => {}}
-                style={{
-                  zIndex: recipes.length - index,
-                  transform: [{ scale: 1 - index * 0.05 }],
-                }}
-              />
-            ))}
-          </View>
-        ) : (
-          <View className="items-center px-6">
-            <Text className="text-6xl mb-4">🎉</Text>
-            <Text className="text-2xl mb-2 text-[#2C3E50]">All done!</Text>
-            <Text className="text-sm mb-6 text-[#2C3E50] opacity-70">
-              You've reviewed all recipes!
-            </Text>
-            <TouchableOpacity
-              onPress={handleReset}
-              className="px-8 py-3 bg-[#2ECC71] rounded-full shadow-lg"
-            >
-              <Text className="text-white text-base">Start Over</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-
-      {/* Action buttons */}
+    <View className="flex-1 bg-background items-center justify-center px-4 overflow-hidden">
+      {currentIndex < recipes.length ? (
+        <View className="w-full" style={{ aspectRatio: 3 / 4.5 }}>
+          {recipes.slice(currentIndex, currentIndex + 2).map((recipe, index) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onSwipe={index === 0 ? handleSwipe : () => {}}
+              style={{
+                zIndex: recipes.length - index,
+                transform: [{ scale: 1 - index * 0.05 }],
+              }}
+            />
+          ))}
+        </View>
+      ) : (
+        <View className="items-center px-6">
+          <Text className="text-6xl mb-4">🎉</Text>
+          <Text className="text-2xl mb-2 text-text">All done!</Text>
+          <Text className="text-sm mb-6 text-text opacity-70">
+            You've reviewed all recipes!
+          </Text>
+          <TouchableOpacity
+            onPress={handleReset}
+            className="px-8 py-3 bg-[#2ECC71] rounded-full shadow-lg"
+          >
+            <Text className="text-white text-base">Start Over</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       {currentIndex < recipes.length && (
-        <View className="pb-6">
-          {/* <ActionButtons
-            onPass={() => handleSwipe('left')}
-            onLike={() => handleSwipe('right')}
-            onUndo={handleUndo}
-            canUndo={currentIndex > 0}
-          /> */}
+        <View className="flex-row items-center justify-center gap-10 my-4">
+          <TouchableOpacity
+            onPress={() => handleSwipe('left')}
+            className="size-16 rounded-full bg-secondary-500 items-center justify-center shadow-lg"
+          >
+            <X color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleSwipe('right')}
+            className="size-16 rounded-full bg-primary-500 items-center justify-center shadow-lg"
+          >
+            <Heart color="white" />
+          </TouchableOpacity>
         </View>
       )}
     </View>

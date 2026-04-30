@@ -1,15 +1,15 @@
+import { AuthProvider } from '@/context/AuthProvider';
+import useAuth from '@/hooks/useAuth';
 import { Redirect } from 'expo-router';
 
 export default function IndexPage() {
-//   const { user } = useAuth(); // Your custom auth hook
+  const { auth } = useAuth();
 
-  if (true) {
-    return (
-      <Redirect href="/Login" />
-    )
-  }
+  console.log(auth)
 
-  // return (
-  //   // Your main content here
-  // );
+  return (
+    <AuthProvider>
+      {Object.keys(auth).length <= 0 ? <Redirect href="/Login" />: <Redirect href="/Discover" />}
+    </AuthProvider>
+  )
 }

@@ -7,6 +7,7 @@ import Animated, {
   interpolate,
   runOnJS,
 } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const SWIPE_THRESHOLD = 100;
 
@@ -58,21 +59,24 @@ export default function RecipeCard({ recipe, onSwipe, style }: RecipeCardProps) 
 
   return (
     <Animated.View
-      className="absolute w-full h-full"
+      className="absolute w-full h-full py-2"
       style={[animatedStyle, style]}
       {...panResponder.panHandlers}
     >
-      <View className="flex-1 rounded-2xl bg-[#FDF6EC] overflow-hidden shadow-2xl">
+      <View className="flex-1 rounded-2xl bg-[#fcfaf8] overflow-hidden shadow-xl mt-2">
 
         {/* Image — top 60% */}
-        <View className="flex-[3]">
+        <View className="flex-[4]">
           <Image
             source={{ uri: recipe.image }}
             className="w-full h-full"
             resizeMode="cover"
           />
           {/* Gradient overlay */}
-          <View className="absolute bottom-0 left-0 right-0 h-[70%] bg-black/55" />
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.7)']}
+            className="absolute bottom-0 left-0 right-0 h-[50%]"
+          />
 
           {/* Text overlay */}
           <View className="absolute bottom-0 left-0 right-0 p-4">
@@ -98,7 +102,7 @@ export default function RecipeCard({ recipe, onSwipe, style }: RecipeCardProps) 
         </View>
 
         {/* Description — bottom 40% */}
-        <View className="flex-[2] p-4 justify-center">
+        <View className="flex-[1] p-4 justify-center">
           <Text className="text-sm text-[#2C3E50] opacity-80 leading-5">
             {recipe.description}
           </Text>
