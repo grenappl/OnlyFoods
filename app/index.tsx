@@ -4,7 +4,9 @@ export default function IndexPage() {
 //   const { user } = useAuth(); // Your custom auth hook
 
   if (true) {
-    return <Redirect href="/Login" />;
+    return (
+      <Redirect href="/Login" />
+    )
   }
 
   // return (

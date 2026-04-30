@@ -12,7 +12,7 @@ export default function Login() {
 
   const handleSignup = () => {
     // Placeholder for login logic
-    // On success: router.back()
+    router.back()
   };
 
   return (
@@ -20,8 +20,8 @@ export default function Login() {
       <View className="flex-1 px-6 py-12 justify-center bg-background">
         {/* Logo/Icon - placeholder */}
         <View className="items-center mb-8">
-          <Text className="text-3xl font-bold text-gray-900 text-center">Welcome to OnlyFoods!</Text>
-          <Text className="text-lg text-text mt-2 text-center">Create an account</Text>
+          <Image source={require('@/assets/logo.png')} className='object-fit items-center w-[65%] h-16'/>
+          <Text className="text-lg text-text mt-2 text-center">Create your account</Text>
         </View>
 
         <View className="space-y-4">

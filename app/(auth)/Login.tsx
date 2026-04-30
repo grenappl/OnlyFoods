@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -10,8 +10,7 @@ export default function Login() {
 
   const handleLogin = () => {
     // Placeholder for login logic
-    console.log('Login attempt:', { email, password });
-    // On success: router.replace('/(pages)');
+    router.replace('/Discover')
   };
 
   return (
@@ -19,7 +18,7 @@ export default function Login() {
       <View className="flex-1 px-6 py-12 justify-center bg-background">
         {/* Logo/Icon - placeholder */}
         <View className="items-center mb-8">
-          <Text className="text-3xl font-bold text-gray-900 text-center">Welcome to OnlyFoods!</Text>
+          <Image source={require('@/assets/logo.png')} className='object-fit items-center w-[65%] h-16'/>
           <Text className="text-lg text-text mt-2 text-center">Sign in to your account</Text>
         </View>
 
@@ -60,11 +59,11 @@ export default function Login() {
         {/* Links */}
         <View className="flex-row justify-center mt-8 space-x-2">
           <Text className="text-sm text-text">Don't have an account? </Text>
-          <Link href="/Signup" asChild>
-            <TouchableOpacity>
-              <Text className="text-sm font-medium text-accent-600">Sign up</Text>
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity
+            onPress={() => router.push('/Signup')}
+          >
+            <Text className="text-sm font-medium text-accent-600">Sign up</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaProvider>
