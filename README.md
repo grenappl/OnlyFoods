@@ -41,6 +41,12 @@ The app focuses on simplicity, personalization, and user experience, making it e
 ### Simple Recommendation System
 - Suggests food based on user preferences and interactions
 
+```
+npm i
+npm i expo
+npx expo start --tunnel
+```
+
 ## Project Structure
 ```
 WIP
