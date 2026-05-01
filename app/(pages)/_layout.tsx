@@ -1,18 +1,17 @@
 import Header from '@/components/Header';
+import useTheme from '@/hooks/useTheme';
 import { Tabs } from 'expo-router';
 import { BookSearch, ChefHat, Heart, ListFilterPlus, UserRound } from 'lucide-react-native';
-import { useColorScheme } from 'react-native';
 
 export default function PagesLayout() {
-  const colorScheme = useColorScheme();
   const activeColor = "#F39C12";
-  // const inactiveColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const { isDark } = useTheme()
 
   return (
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: "#fcf8f4"
+          backgroundColor: isDark ? '#18140F' : "#FEF9F3"
         },
       }}
     >
@@ -38,7 +37,7 @@ export default function PagesLayout() {
         tabBarActiveTintColor: activeColor
       }} />
       <Tabs.Screen name="Profile" options={{ 
-        header: () => <Header />,
+        header: () => {},
         tabBarIcon: ({ color }) => <UserRound color={color} />,
         tabBarActiveTintColor: activeColor
       }} />

@@ -17,7 +17,7 @@ export default function Login() {
 
   return (
     <SafeAreaProvider className="flex-1 bg-gradient-to-b from-orange-50 to-amber-100">
-      <View className="flex-1 px-6 py-12 justify-center bg-background">
+      <View className="flex-1 px-6 py-12 justify-center bg-background-200">
         {/* Logo/Icon - placeholder */}
         <View className="items-center mb-8">
           <Image source={require('@/assets/logo.png')} className='object-fit items-center w-[65%] h-16'/>
@@ -72,7 +72,7 @@ export default function Login() {
           </View>
 
           <TouchableOpacity
-            className="bg-accent-500 py-4 px-6 rounded-xl items-center mt-3"
+            className="bg-primary-500 py-4 px-6 rounded-xl items-center mt-3"
             onPress={handleSignup}
             activeOpacity={0.8}
           >
@@ -86,7 +86,7 @@ export default function Login() {
             <TouchableOpacity
               onPress={() => router.back()}
             >
-              <Text className="text-sm font-medium text-accent-600">Log in</Text>
+              <Text className="text-sm font-medium text-primary-600">Log in</Text>
             </TouchableOpacity>
         </View>
       </View>

@@ -1,15 +1,17 @@
-import { useRef } from 'react';
-import { View, Text, Image, PanResponder, Dimensions } from 'react-native';
+import { useRef, useImperativeHandle, forwardRef } from 'react';
+import { View, Text, Image, PanResponder } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withTiming,
   interpolate,
-  runOnJS,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { scheduleOnRN } from 'react-native-worklets';
+import { Clock, Users } from 'lucide-react-native';
 
-const SWIPE_THRESHOLD = 100;
+const SWIPE_THRESHOLD = 130;
 
 interface Recipe {
   id: number;
@@ -24,24 +26,51 @@ interface Recipe {
 interface RecipeCardProps {
   recipe: Recipe;
   onSwipe: (direction: 'left' | 'right') => void;
+  onPress: () => void;
   style?: object;
 }
 
-export default function RecipeCard({ recipe, onSwipe, style }: RecipeCardProps) {
-  const translateX = useSharedValue(0);
+export interface RecipeCardRef {
+  triggerSwipe: (direction: 'left' | 'right') => void;
+}
 
-  const triggerSwipe = (direction: 'left' | 'right') => onSwipe(direction);
+const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe, onPress, style }, ref) => {
+  const translateX = useSharedValue(0);
+  const isDragging = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    triggerSwipe: (direction: 'left' | 'right') => {
+      const target = direction === 'right' ? 500 : -500;
+      translateX.value = withTiming(target, { duration: 350 }, (finished) => {
+        if (finished) scheduleOnRN(onSwipe, direction);
+      });
+    },
+  }));
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, { dx }) => {
+      onPanResponderGrant: () => {
+        isDragging.current = false;
+      },
+      onPanResponderMove: (_, { dx, dy }) => {
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          isDragging.current = true; // moved enough to be a drag
+        }
         translateX.value = dx;
       },
       onPanResponderRelease: (_, { dx }) => {
+        if (!isDragging.current) {
+          translateX.value = withSpring(0);
+          scheduleOnRN(onPress);
+          return;
+        }
         if (Math.abs(dx) > SWIPE_THRESHOLD) {
-          runOnJS(triggerSwipe)(dx > 0 ? 'right' : 'left');
+          const target = dx > 0 ? 500 : -500;
+          translateX.value = withTiming(target, { duration: 250 }, (finished) => {
+            if (finished) scheduleOnRN(onSwipe, dx > 0 ? 'right' : 'left');
+          });
         } else {
           translateX.value = withSpring(0);
         }
@@ -63,52 +92,51 @@ export default function RecipeCard({ recipe, onSwipe, style }: RecipeCardProps) 
       style={[animatedStyle, style]}
       {...panResponder.panHandlers}
     >
-      <View className="flex-1 rounded-2xl bg-[#fcfaf8] overflow-hidden shadow-xl mt-2">
-
-        {/* Image — top 60% */}
+      <View className="flex-1 rounded-2xl bg-background-50 dark:bg-background-dark-50 overflow-hidden mt-2 shadow-md">
         <View className="flex-[4]">
           <Image
             source={{ uri: recipe.image }}
             className="w-full h-full"
             resizeMode="cover"
           />
-          {/* Gradient overlay */}
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.7)']}
             className="absolute bottom-0 left-0 right-0 h-[50%]"
           />
-
-          {/* Text overlay */}
           <View className="absolute bottom-0 left-0 right-0 p-4">
             <Text className="text-white text-2xl font-semibold mb-2">
               {recipe.name}
             </Text>
-            <View className="flex-row items-center gap-3">
-              <View className="flex-row items-center gap-1">
-                <Text className="text-xs">🕐</Text>
-                <Text className="text-white text-xs">{recipe.cookTime}</Text>
+            <View className="flex-row items-center gap-4">
+              <View className="flex-row items-center gap-2">
+                <Clock size={12} color="white" />
+                <Text className="text-xs text-white">{recipe.cookTime}</Text>
               </View>
               <View className="flex-row items-center gap-1">
-                <Text className="text-xs">👥</Text>
-                <Text className="text-white text-xs">{recipe.servings}</Text>
+                <Users size={12} color="white" />
+                <Text className="text-xs text-white">{recipe.servings}</Text>
               </View>
               <View className="px-2.5 py-1 rounded-full bg-[#F39C12]">
-                <Text className="text-[#2C3E50] text-xs font-semibold">
+                <Text className="text-text-600 text-xs font-semibold">
                   {recipe.difficulty}
                 </Text>
               </View>
             </View>
           </View>
         </View>
-
-        {/* Description — bottom 40% */}
-        <View className="flex-[1] p-4 justify-center">
-          <Text className="text-sm text-[#2C3E50] opacity-80 leading-5">
-            {recipe.description}
-          </Text>
+        <View className="h-full flex-[1] p-6">
+          <View className='h-3/5'>
+            <Text className="text-justify text-text-500 dark:text-text-dark-700 leading-5" numberOfLines={3} ellipsizeMode='tail'>
+              {recipe.description}
+            </Text>
+          </View>
+          <View className='h-3/5 justify-end pb-2'>
+            <Text className="text-center text-text-300 dark:text-text-dark-600 text-sm opacity-75 leading-5">Press to view recipe</Text>
+          </View>
         </View>
-
       </View>
     </Animated.View>
   );
-}
+});
+
+export default RecipeCard;

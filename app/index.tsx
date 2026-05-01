@@ -1,15 +1,17 @@
-import { AuthProvider } from '@/context/AuthProvider';
-import useAuth from '@/hooks/useAuth';
 import { Redirect } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
+import useAuth from '@/hooks/useAuth';
 
 export default function IndexPage() {
-  const { auth } = useAuth();
+  const { auth, isLoading } = useAuth();
 
-  console.log(auth)
+  if (isLoading) {
+    return (
+      <View className="dark flex-[1] justify-center items-center">
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
-  return (
-    <AuthProvider>
-      {Object.keys(auth).length <= 0 ? <Redirect href="/Login" />: <Redirect href="/Discover" />}
-    </AuthProvider>
-  )
+  return auth.accessToken ? <Redirect href="/Discover" /> : <Redirect href="/Login" />;
 }

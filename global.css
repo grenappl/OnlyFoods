@@ -4,6 +4,6 @@
 
 @layer utilities {
     .text-field {
-        @apply px-4 py-3 bg-accent-100 border border-accent-100  rounded-xl text-base focus:border-accent-500 focus:outline-none
+        @apply px-4 py-3 bg-primary-100 border border-primary-100  rounded-xl text-base focus:border-primary-500 focus:outline-none
     }
 }
