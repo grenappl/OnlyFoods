@@ -1,15 +1,17 @@
 import { Redirect } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
+import useAuth from '@/hooks/useAuth';
 
 export default function IndexPage() {
-//   const { user } = useAuth(); // Your custom auth hook
+  const { auth, isLoading } = useAuth();
 
-  if (true) {
+  if (isLoading) {
     return (
-      <Redirect href="/Login" />
-    )
+      <View className="dark flex-[1] justify-center items-center">
+        <ActivityIndicator />
+      </View>
+    );
   }
 
-  // return (
-  //   // Your main content here
-  // );
+  return auth.accessToken ? <Redirect href="/Discover" /> : <Redirect href="/Login" />;
 }
