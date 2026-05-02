@@ -43,8 +43,8 @@ The app focuses on simplicity, personalization, and user experience, making it e
 
 ## Run Dev Server
 - Follow these commands in order to run development server
-    - _npm i expo_ - `if you dont already have node modules, use this cmd`
-    - _npx expo install_ - `installs all dependencies using expo (use 'npx expo install package_name' to install a new dependency)` 
+    - _npm i expo_ - `if you dont already have node modules or expo, use this cmd`
+    - _npx expo install_ - `installs all dependencies using expo (use 'npx expo install package_name' to install a new dependency, and npm rm package_name to remove)` 
     - _npx expo start_
 
 ## Project Structure
