@@ -3,10 +3,8 @@ import {
   User,
   Bell,
   Lock,
-  Settings,
   HelpCircle,
   LogOut,
-  ChevronRight,
   Moon,
   Sun,
 } from 'lucide-react-native';
@@ -27,6 +25,15 @@ function MenuItem({ icon, label, onPress, danger = false }: MenuItemProps) {
       onPress={onPress}
       activeOpacity={0.7}
       className="flex-row items-center bg-background-50 dark:bg-background-dark-50 px-4 py-4 rounded-2xl mb-3"
+      style={{
+        // iOS
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        // Android
+        elevation: 2,
+      }}
     >
       <View className="w-8 items-center">{icon}</View>
       <Text
@@ -81,28 +88,20 @@ export default function ProfilePage() {
           label="Notifications"
           onPress={() => {}}
         />
-        {/* Dark mode toggle as a menu row */}
-        <TouchableOpacity
-          onPress={toggleTheme}
-          activeOpacity={0.7}
-          className="flex-row items-center bg-background-50 dark:bg-background-dark-50 px-4 py-4 rounded-2xl mb-3"
-        >
-          <View className="w-8 items-center">
-            {isDark ?
-            <Moon size={18} color='#9CA3AF'/> :
-            <Sun size={18} color='#9CA3AF'/>}
-          </View>
-          <Text className="flex-1 ml-3 font-semibold text-base text-text-700 dark:text-text-dark-700">
-            {isDark ? 'Dark Mode' : 'Light Mode'}
-          </Text>
-        </TouchableOpacity>
         <MenuItem
-          icon={<Lock size={20} color='#9CA3AF' />}
+          icon={isDark ?
+            <Moon size={18} color={isDark ? '#9CA3AF' : "#4B5563"}/> :
+            <Sun size={18} color={isDark ? '#9CA3AF' : "#4B5563"}/>}
+          label={isDark ? 'Dark Mode' : 'Light Mode'}
+          onPress={toggleTheme}
+        />
+        <MenuItem
+          icon={<Lock size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Privacy"
           onPress={() => {}}
         />
         <MenuItem
-          icon={<HelpCircle size={20} color='#9CA3AF' />}
+          icon={<HelpCircle size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Help & Support"
           onPress={() => {}}
         />

@@ -30,8 +30,8 @@ export default function PagesLayout() {
         tabBarIcon: ({ color }) => <Heart color={color} />,
         tabBarActiveTintColor: activeColor
       }} />
-      <Tabs.Screen name="CreateRecipe" options={{ 
-        title: 'Recipe',
+      <Tabs.Screen name="MyRecipes" options={{ 
+        title: 'Recipes',
         header: () => <Header />,
         tabBarIcon: ({ color }) => <ChefHat color={color} />,
         tabBarActiveTintColor: activeColor
