@@ -1,26 +1,17 @@
 import '@/global.css';
 import { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import RecipeCard, { RecipeCardRef } from '@/components/RecipeCard';
+import RecipeCard, { RecipeCardRef } from '@/components/discover/RecipeCard';
 import { Heart, X } from 'lucide-react-native';
 import recipes from '@/utils/Recipes';
 import RecipeDetails from '@/components/RecipeDetails';
 import useAuth from '@/hooks/useAuth';
-
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  description: string;
-  cookTime: string;
-  servings: number;
-  difficulty: string;
-}
+import { RecipeType } from '@/utils/Recipes';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
 
   const cardRef = useRef<RecipeCardRef>(null);
   const { auth } = useAuth()

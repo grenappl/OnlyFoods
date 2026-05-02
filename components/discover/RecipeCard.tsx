@@ -9,22 +9,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { scheduleOnRN } from 'react-native-worklets';
-import { Clock, Users } from 'lucide-react-native';
+import { Clock, Heart, Users } from 'lucide-react-native';
+import { RecipeType } from '@/utils/Recipes';
 
 const SWIPE_THRESHOLD = 130;
 
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  servings: number;
-  difficulty: string;
-  description: string;
-}
-
 interface RecipeCardProps {
-  recipe: Recipe;
+  recipe: RecipeType;
   onSwipe: (direction: 'left' | 'right') => void;
   onPress: () => void;
   style?: object;
@@ -107,19 +98,20 @@ const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe
             <Text className="text-white text-2xl font-semibold mb-2">
               {recipe.name}
             </Text>
-            <View className="flex-row items-center gap-4">
+            <View className='flex-row justify-between'>
+              <View className="flex-row items-center gap-4">
+                <View className="flex-row items-center gap-2">
+                  <Clock size={12} color="white" />
+                  <Text className="text-xs text-white">{recipe.cookTime}</Text>
+                </View>
+                <View className="flex-row items-center gap-1">
+                  <Users size={12} color="white" />
+                  <Text className="text-xs text-white">{recipe.servings} servings</Text>
+                </View>
+              </View>
               <View className="flex-row items-center gap-2">
-                <Clock size={12} color="white" />
-                <Text className="text-xs text-white">{recipe.cookTime}</Text>
-              </View>
-              <View className="flex-row items-center gap-1">
-                <Users size={12} color="white" />
-                <Text className="text-xs text-white">{recipe.servings}</Text>
-              </View>
-              <View className="px-2.5 py-1 rounded-full bg-[#F39C12]">
-                <Text className="text-text-600 text-xs font-semibold">
-                  {recipe.difficulty}
-                </Text>
+                <Heart size={20} color="white" fill="white"/>
+                <Text className="text-md text-white">0</Text>
               </View>
             </View>
           </View>

@@ -9,21 +9,11 @@ import {
 } from 'react-native';
 import { Heart, Search, Clock, Users, SearchX } from 'lucide-react-native';
 import RecipeDetail from '@/components/RecipeDetails';
-import recipes from '@/utils/Recipes';
+import recipes, { RecipeType } from '@/utils/Recipes';
 import useTheme from '@/hooks/useTheme';
 
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  servings: number;
-  difficulty: string;
-  description: string;
-}
-
 interface RecipeFavoriteCard {
-  recipe: Recipe;
+  recipe: RecipeType;
   onPress: () => void;
   onUnlike: () => void;
 }
@@ -83,8 +73,8 @@ function RecipeRow({ recipe, onPress, onUnlike }: RecipeFavoriteCard) {
 
 export default function FavoritesPage() {
   const [search, setSearch] = useState('');
-  const [favorites, setFavorites] = useState<Recipe[]>(recipes.slice(0, 5));
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [favorites, setFavorites] = useState<RecipeType[]>(recipes.slice(0, 5));
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
   const { isDark } = useTheme()
 
   const filtered = useMemo(() => {
@@ -99,7 +89,7 @@ export default function FavoritesPage() {
 
   return (
     <View className="flex-1 bg-background-200 dark:bg-background-dark-100 px-2 pt-5">
-      <Text className="text-2xl text-text-700 dark:text-text-dark-800 font-bold text-text mb-5 ml-2">Favorites</Text>
+      <Text className="text-2xl text-text-700 dark:text-text-dark-800 font-bold mb-5 ml-2">Favorites</Text>
 
       <View 
         className="flex-row items-center bg-background-50 dark:bg-background-dark-50 rounded-2xl px-4 mb-5 mx-2 h-12"
@@ -113,12 +103,12 @@ export default function FavoritesPage() {
           elevation: 2,
         }}
       >
-        <Search size={18} color={isDark ? '#9CA3AF' : "#4B5563"} />
+        <Search size={18} color={isDark ? '#9CA3AF' : "#6B7280"} />
         <TextInput
           value={search}
           onChangeText={setSearch}
           placeholder="Search favorites..."
-          placeholderTextColor={isDark ? '#9CA3AF' : "#4B5563"}
+          placeholderTextColor={isDark ? '#6B7280' : "#9CA3AF"}
           className="flex-1 ml-3 text-sm text-text-800 dark:text-text-dark-800"
         />
         {search.length > 0 && (

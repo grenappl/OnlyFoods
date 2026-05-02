@@ -14,30 +14,23 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Clock, Users, X } from 'lucide-react-native';
+import { BookText, ChefHat, Clock, Dot, Heart, Info, Users, X } from 'lucide-react-native';
 import { scheduleOnRN } from 'react-native-worklets';
+import useTheme from '@/hooks/useTheme';
+import RECIPES, { RecipeType } from '@/utils/Recipes';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const DISMISS_THRESHOLD = 120;
 
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  servings: number;
-  difficulty: string;
-  description: string;
-}
-
 interface RecipeDetailSheetProps {
-  recipe: Recipe | null;
+  recipe: RecipeType | null;
   onClose: () => void;
 }
 
 export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheetProps) {
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
+  const { isDark } = useTheme();
 
   const handleClose = () => {
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 350 }, (finished) => {
@@ -113,17 +106,20 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
             />
             <View className="absolute bottom-0 left-0 right-0 p-5">
               <Text className="text-white text-3xl font-bold mb-2">{recipe.name}</Text>
-              <View className="flex-row items-center gap-4">
-                <View className="flex-row items-center gap-2">
-                  <Clock color='white' size={16}/>
-                  <Text className="text-white text-sm">{recipe.cookTime}</Text>
+              <View className="flex-row justify-between">
+                <View className="flex-row items-center gap-4">
+                  <View className="flex-row items-center gap-2">
+                    <Clock color='white' size={16}/>
+                    <Text className="text-white text-sm">{recipe.cookTime}</Text>
+                  </View>
+                  <View className="flex-row items-center gap-2">
+                    <Users color='white' size={16}/>
+                    <Text className="text-white text-sm">{recipe.servings} servings</Text>
+                  </View>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Users color='white' size={16}/>
-                  <Text className="text-white text-sm">{recipe.servings} servings</Text>
-                </View>
-                <View className="px-3 py-1 rounded-full bg-primary-500">
-                  <Text className="text-text-800 text-sm font-semibold">{recipe.difficulty}</Text>
+                  <Heart size={20} color="white" fill="white"/>
+                  <Text className="text-md text-white">0</Text>
                 </View>
               </View>
             </View>
@@ -131,24 +127,41 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
 
           {/* Content */}
           <View className="p-5">
-            <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-2">About</Text>
-            <Text className="text-base text-text-800 dark:text-text-dark-700 leading-6 mb-6 text-justify">
+            <View className='flex-row gap-3'>
+              <Info color={isDark ? '#F9FAFB': '#111827'} />
+              <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-2">About</Text>
+            </View>
+            <Text className="text-base text-text-800 dark:text-text-dark-700 leading-6 text-justify mb-8">
               {recipe.description}
             </Text>
 
             {/* Placeholder detail sections */}
-            <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Ingredients</Text>
-            <View className="bg-background-200 dark:bg-background-dark-200 rounded-2xl p-4 mb-6">
-              <Text className="text-text-800 dark:text-text-dark-800 text-sm">
-                Ingredient details coming soon...
-              </Text>
+            <View className='flex-row gap-3'>
+              <ChefHat color={isDark ? '#F9FAFB': '#111827'} />
+              <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Ingredients</Text>
+            </View>
+            <View className="bg-background-200 dark:bg-background-dark-100 rounded-2xl p-4 mb-10">
+                {recipe.ingredients.map((ingredient, index) =>
+                  <View className='flex-row gap-2' key={`${recipe.name}_${index}_${ingredient}`}>
+                    <Dot color={isDark ? '#F9FAFB': '#111827'} />
+                    <Text className="text-text-800 dark:text-text-dark-800 text-md mb-1 w-[80%]">{ingredient}</Text>
+                  </View>
+                )}
             </View>
 
-            <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Instructions</Text>
-            <View className="bg-background-200 dark:bg-background-dark-200 rounded-2xl p-4 mb-6">
-              <Text className="text-text-800 dark:text-text-dark-800 text-sm">
-                Step-by-step instructions coming soon...
-              </Text>
+            <View className='flex-row gap-3'>
+              <BookText color={isDark ? '#F9FAFB': '#111827'} />
+              <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Instructions</Text>
+            </View>
+            <View className="bg-background-200 dark:bg-background-dark-100 rounded-2xl p-4 mb-8 justify-between">
+              {recipe.instructions.map((instruction, index) =>
+                <View className='mb-6' key={`${recipe.name}_${index}_${instruction}`}>
+                  <View className='size-8 bg-primary-500 rounded-full justify-center items-center mb-2'>
+                    <Text className="text-text-800 text-xs">{Number(index + 1)}</Text>
+                  </View>
+                  <Text className="text-text-800 dark:text-text-dark-800 text-md text-justify">{instruction}</Text>
+                </View>
+              )}
             </View>
           </View>
         </ScrollView>

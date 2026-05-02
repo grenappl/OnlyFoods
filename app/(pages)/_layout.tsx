@@ -21,7 +21,7 @@ export default function PagesLayout() {
         tabBarActiveTintColor: activeColor,
       }} />
       <Tabs.Screen name="Filter" options={{
-        header: () => <Header />,
+        header: () => {},
         tabBarIcon: ({ color }) => <ListFilterPlus color={color} />,
         tabBarActiveTintColor: activeColor
       }} />
