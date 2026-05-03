@@ -1,6 +1,7 @@
 import { AuthProvider } from '@/context/AuthProvider';
 import { FavoritesProvider } from '@/context/FavoritesProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
+import { UserRecipesProvider } from '@/context/UserRecipesProvider';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -16,7 +17,9 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider>
         <FavoritesProvider>
-          <Slot />
+          <UserRecipesProvider>
+            <Slot />
+          </UserRecipesProvider>
         </FavoritesProvider>
       </ThemeProvider>
     </AuthProvider>

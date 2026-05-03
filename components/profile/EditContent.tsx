@@ -14,7 +14,7 @@ export function EditProfileContent(){
 
   const handleAttachImage = async () => {
     const pickedFile = await DocumentPicker.getDocumentAsync({
-      type: 'image/*', // Allow all file types
+      type: 'image/*',
       copyToCacheDirectory: true, // Ensures file is readable by expo-file-system
       multiple: false,
     });

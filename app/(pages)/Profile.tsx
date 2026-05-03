@@ -19,6 +19,8 @@ import { useState } from 'react';
 import StatTooltip, { STAT_TOOLTIPS } from '@/components/profile/StatToolTip';
 import EditProfileModal from '@/components/profile/EditProfileModal';
 import { EditProfileContent, LogOutContent } from '@/components/profile/EditContent';
+import useFavorites from '@/hooks/useFavorites';
+import useRecipes from '@/hooks/useRecipes';
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -58,6 +60,8 @@ function StatCard({ onPress, icon, count, title }: StatCardProps){
 export default function ProfilePage() {
   const { auth } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { favorites } = useFavorites();
+  const { recipes } = useRecipes();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>();
@@ -78,7 +82,7 @@ export default function ProfilePage() {
       <View className="px-5 pt-16">
 
         {/* Avatar + user info */}
-        <View className="items-center mb-5">
+        <View className="items-center mb-5"> 
           <View className="size-24 rounded-full bg-accent-500 items-center justify-center mb-4 shadow-md">
             <User size={44} color="white" />
           </View>
@@ -94,7 +98,7 @@ export default function ProfilePage() {
         <View className='flex-row gap-3 my-5 mb-8'>
           <StatCard
             icon={<BookOpen color="#F39C12" />}
-            count={0}
+            count={recipes.length}
             title="Recipes"
             onPress={() => setTooltip(() => STAT_TOOLTIPS.Recipes)}
           />
@@ -106,7 +110,7 @@ export default function ProfilePage() {
           />
           <StatCard
             icon={<BookHeart color="#2ECC71" />}
-            count={1}
+            count={favorites.length}
             title="Favorites"
             onPress={() => setTooltip(() => STAT_TOOLTIPS.Favorites)}
           />
