@@ -1,5 +1,5 @@
 import useTheme from "@/hooks/useTheme";
-import { ChefHat, Clock, Search, Users } from "lucide-react-native";
+import { ChefHat, Clock, PlusCircle, Search, Users, X } from "lucide-react-native";
 import { useState } from "react";
 import {
   View,
@@ -9,28 +9,50 @@ import {
   ScrollView,
 } from "react-native";
 
+const COOK_TIMES = [
+  "Any Time",
+  "Under 30 min",
+  "30-60 min",
+  "Over 60 min",
+];
+const SERVING_SIZES = [
+  "Any Serving",
+  "1 Serving",
+  "2-3 Servings",
+  "4-5 Servings",
+  "6-7 Servings",
+  "8+ Servings",
+]
+
 export default function FilterPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string[]>([]);
-  const [cookTimeRange, setCookTimeRange] = useState<string>("all");
+  const [cookTimeRange, setCookTimeRange] = useState<string>(COOK_TIMES[0]);
+  const [servingSizeRange, setServingSizeRange] = useState<string>(SERVING_SIZES[0]);
+
+  const [ingredientInput, setIngredientInput] = useState("");
+  const [ingredients, setIngredients] = useState<string[]>([]);
+
   const { isDark } = useTheme();
-  const [search, setSearch] = useState('');
 
-  const difficulties = ["Easy", "Medium", "Hard"];
-  const cookTimes = [
-    { value: "all", label: "Any Time" },
-    { value: "quick", label: "Under 30 min" },
-    { value: "medium", label: "30-60 min" },
-    { value: "long", label: "Over 60 min" },
-  ];
-
-  const toggleDifficulty = (difficulty: string) => {
-    setSelectedDifficulty((prev) =>
-      prev.includes(difficulty)
-        ? prev.filter((d) => d !== difficulty)
-        : [...prev, difficulty]
-    );
+  const addIngredient = () => {
+    const trimmed = ingredientInput.trim().toLowerCase();
+    if (!trimmed || ingredients.includes(trimmed)) return;
+    setIngredients((prev) => [...prev, trimmed]);
+    setIngredientInput('');
   };
+  const removeIngredient = (item: string) => {
+    setIngredients((prev) => prev.filter((i) => i !== item));
+  };
+
+  const handleFilters = () => {
+
+  }
+  const resetFilters = () => {
+    setSearchQuery("");
+    setCookTimeRange(COOK_TIMES[0]);
+    setServingSizeRange(SERVING_SIZES[0]);
+    setIngredients([])
+  }
 
   return (
     <ScrollView className="flex-1 bg-background-200 dark:bg-background-dark-100 pt-8">
@@ -58,24 +80,25 @@ export default function FilterPage() {
             <Clock size={18} color={isDark ? '#9CA3AF' : "#6B7280"} />
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Cook Time</Text>
           </View>
-          <View className="gap-2">
-            {cookTimes.map((time) => {
-              const isSelected = cookTimeRange === time.value;
+          <View className="flex-row flex-wrap gap-2">
+            {COOK_TIMES .map((time) => {
+              const isSelected = cookTimeRange === time;
               return (
                 <TouchableOpacity
-                  key={time.value}
-                  onPress={() => setCookTimeRange(time.value)}
-                  className={`w-full px-5 py-3 rounded-xl border ${
-                    isSelected ? "bg-accent-500 border-accent-500"
-                      : isDark ? "bg-background-dark-50 border-background-dark-300": "bg-background-50 border-text-200"
+                  key={time}
+                  onPress={() => setCookTimeRange(time)}
+                  style={{ width: '48%' }}
+                  className={`px-5 py-3 rounded-xl border ${
+                    isSelected ? "bg-primary-500 border-primary-500"
+                      : isDark ? "bg-background-dark-50 border-background-dark-300" : "bg-background-50 border-text-200"
                   }`}
                 >
                   <Text
                     className={`text-sm ${
-                      isSelected ? "text-background-50" : isDark ? "text-text-dark-800": "text-text-800"
+                      isSelected ? "text-background-50" : isDark ? "text-text-dark-800" : "text-text-800"
                     }`}
                   >
-                    {time.label}
+                    {time}
                   </Text>
                 </TouchableOpacity>
               );
@@ -88,25 +111,25 @@ export default function FilterPage() {
             <Users size={18} color={isDark ? '#9CA3AF' : "#6B7280"} />
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Serving Size</Text>
           </View>
-          <View className="flex-row gap-2">
-            {difficulties.map((difficulty) => {
-              const isSelected = selectedDifficulty.includes(difficulty);
+          <View className="flex-row flex-wrap gap-2">
+            {SERVING_SIZES.map((size) => {
+              const isSelected = servingSizeRange === size;
               return (
                 <TouchableOpacity
-                  key={difficulty}
-                  onPress={() => toggleDifficulty(difficulty)}
-                  className={`px-4 py-2 rounded-full border ${
-                    isSelected
-                      ? "bg-[#3bc475] border-[#2ECC71]"
-                      : "bg-[#fffcf7] border-[#2C3E50]/30"
+                  key={size}
+                  onPress={() => setServingSizeRange(size)}
+                  style={{ width: '48%' }}
+                  className={`px-5 py-3 rounded-xl border ${
+                    isSelected ? "bg-primary-500 border-primary-500"
+                      : isDark ? "bg-background-dark-50 border-background-dark-300" : "bg-background-50 border-text-200"
                   }`}
                 >
                   <Text
                     className={`text-sm ${
-                      isSelected ? "text-[#FDF6EC]" : "text-[#2C3E50]"
+                      isSelected ? "text-background-50" : isDark ? "text-text-dark-800" : "text-text-800"
                     }`}
                   >
-                    {difficulty}
+                    {size}
                   </Text>
                 </TouchableOpacity>
               );
@@ -114,55 +137,72 @@ export default function FilterPage() {
           </View>
         </View>
 
-        <View className="gap-2 mb-5">
+        <View className="gap-2">
           <View className="flex-row gap-2">
-            <ChefHat size={18} color={isDark ? '#9CA3AF' : "#6B7280"} />
+            <ChefHat size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Ingredients</Text>
           </View>
-          <View className="flex-row gap-2">
-            {difficulties.map((difficulty) => {
-              const isSelected = selectedDifficulty.includes(difficulty);
-              return (
-                <TouchableOpacity
-                  key={difficulty}
-                  onPress={() => toggleDifficulty(difficulty)}
-                  className={`px-4 py-2 rounded-full border ${
-                    isSelected
-                      ? "bg-[#3bc475] border-[#2ECC71]"
-                      : "bg-[#fffcf7] border-[#2C3E50]/30"
-                  }`}
-                >
-                  <Text
-                    className={`text-sm ${
-                      isSelected ? "text-[#FDF6EC]" : "text-[#2C3E50]"
-                    }`}
-                  >
-                    {difficulty}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+
+          <View className="flex-row items-center bg-background-50 dark:bg-background-dark-50 border border-text-200 dark:border-background-dark-300 rounded-xl px-4">
+            <TextInput
+              value={ingredientInput}
+              onChangeText={setIngredientInput}
+              onSubmitEditing={addIngredient}
+              placeholder="Add ingredient..."
+              placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
+              returnKeyType="done"
+              className="flex-1 py-3 text-sm text-text-500 dark:text-text-dark-700"
+            />
+            <TouchableOpacity onPress={addIngredient} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <PlusCircle color={isDark ? '#9CA3AF' : '#6B7280'} />
+            </TouchableOpacity>
           </View>
+
+          {/* Chips */}
+          {ingredients.length > 0 && (
+            <View className="flex-row flex-wrap gap-2 mt-1">
+              {ingredients.map((item) => (
+                <View
+                  key={item}
+                  className="flex-row items-center gap-1 bg-primary-100 dark:bg-primary-900 px-3 py-1.5 rounded-full"
+                >
+                  <Text className="text-sm text-primary-800 dark:text-primary-100 capitalize">
+                    {item}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => removeIngredient(item)}
+                    hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                  >
+                    <X size={12} color={isDark ? '#FDEBD0' : '#9C640C'} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Apply Button */}
-        <TouchableOpacity
-          className="w-full py-4 rounded-xl bg-accent-500 dark:bg-accent-600 items-center shadow-md"
-          activeOpacity={0.85}
-        >
-          <Text className="text-white text-base font-semibold">
-            Apply Filters
-          </Text>
-        </TouchableOpacity>
+        <View className="gap-3 my-8">
+          <TouchableOpacity
+            className="w-full py-4 rounded-xl bg-accent-500 dark:bg-accent-600 items-center shadow-md"
+            activeOpacity={0.85}
+            onPress={() => handleFilters()}
+          >
+            <Text className="text-white text-base font-semibold">
+              Apply Filter
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          className="w-full py-4 rounded-xl bg-secondary-500 dark:bg-secondary-600 items-center shadow-md"
-          activeOpacity={0.85}
-        >
-          <Text className="text-white text-base font-semibold">
-            Reset Filters
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            className="w-full py-4 rounded-xl bg-secondary-500 dark:bg-secondary-600 items-center shadow-md"
+            activeOpacity={0.85}
+            onPress={resetFilters}
+          >
+            <Text className="text-white text-base font-semibold">
+              Reset Filter
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

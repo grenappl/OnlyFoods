@@ -27,7 +27,7 @@ export function EditProfileContent(){
       <View>
         <View className='mb-5 justify-center items-center'>
           <TouchableOpacity 
-            className="size-32 bg-primary-100 dark:bg-background-dark-50 rounded-full"
+            className="size-32 bg-primary-50 dark:bg-background-dark-50 rounded-full"
             onPress={() => handleAttachImage()}
           >
             
@@ -36,7 +36,7 @@ export function EditProfileContent(){
         <View className='mb-3'>
           <Text className="text-md font-medium text-text-800 dark:text-text-dark-900 mb-1">Username</Text>
           <TextInput
-            className="text-field"
+            className="edit-prof-field "
             placeholder="Edit your username"
             // value={username}
             // onChangeText={setUsername}
@@ -47,7 +47,7 @@ export function EditProfileContent(){
         <View className='mb-3'>
           <Text className="text-md font-medium text-text-800 dark:text-text-dark-900 mb-1">Email</Text>
           <TextInput
-            className="text-field"
+            className="edit-prof-field"
             placeholder="Edit your email"
             // value={email}
             // onChangeText={setEmail}

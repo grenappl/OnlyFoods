@@ -6,4 +6,7 @@
     .text-field {
         @apply px-4 py-3 border bg-primary-100 dark:bg-background-dark-50 border-primary-100 dark:border-background-dark-50 text-text-800 dark:text-text-dark-800 rounded-xl text-base focus:border-primary-500 focus:outline-none
     }
+    .edit-prof-field {
+        @apply px-4 py-3 border bg-primary-50 dark:bg-background-dark-50 border-primary-50 dark:border-background-dark-50 text-text-800 dark:text-text-dark-800 rounded-xl text-base focus:border-primary-500 focus:outline-none
+    }
 }

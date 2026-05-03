@@ -1,4 +1,4 @@
-import { useRef, useImperativeHandle, forwardRef } from 'react';
+import { useRef, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Text, Image, PanResponder } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -18,72 +18,101 @@ interface RecipeCardProps {
   recipe: RecipeType;
   onSwipe: (direction: 'left' | 'right') => void;
   onPress: () => void;
-  style?: object;
+  setIsAnimating: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface RecipeCardRef {
   triggerSwipe: (direction: 'left' | 'right') => void;
 }
 
-const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe, onPress, style }, ref) => {
+const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe, onPress, setIsAnimating }, ref) => {
   const translateX = useSharedValue(0);
-  const isDragging = useRef(false);
+  const opacity = useSharedValue(0);
+  let isDragging = false;
+
+  const onSwipeRef = useRef(onSwipe);
+  const onPressRef = useRef(onPress);
+
+  useEffect(() => {
+    onSwipeRef.current = onSwipe;
+    onPressRef.current = onPress;
+  });
+
+  useEffect(() => {
+    // fade in when card mounts
+    translateX.value = 0;
+    opacity.value = withTiming(1, { duration: 200 });
+  }, []);
 
   useImperativeHandle(ref, () => ({
     triggerSwipe: (direction: 'left' | 'right') => {
       const target = direction === 'right' ? 500 : -500;
-      translateX.value = withTiming(target, { duration: 350 }, (finished) => {
-        if (finished) scheduleOnRN(onSwipe, direction);
+      const callback = onSwipeRef.current;
+      translateX.value = withTiming(target, { duration: 250 }, (finished) => {
+        if (finished) scheduleOnRN(callback, direction);
       });
     },
   }));
 
-  const panResponder = useRef(
+  const panHandlers = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
-        isDragging.current = false;
+        isDragging = false;
       },
       onPanResponderMove: (_, { dx, dy }) => {
         if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-          isDragging.current = true; // moved enough to be a drag
+          isDragging = true;
         }
         translateX.value = dx;
       },
       onPanResponderRelease: (_, { dx }) => {
-        if (!isDragging.current) {
+        if (!isDragging) {
           translateX.value = withSpring(0);
-          scheduleOnRN(onPress);
+          const pressCallback = onPressRef.current;
+          scheduleOnRN(pressCallback);
           return;
         }
         if (Math.abs(dx) > SWIPE_THRESHOLD) {
+          setIsAnimating(true);
           const target = dx > 0 ? 500 : -500;
+          const direction = dx > 0 ? 'right' : 'left'
+          const swipeCallback = onSwipeRef.current; 
           translateX.value = withTiming(target, { duration: 250 }, (finished) => {
-            if (finished) scheduleOnRN(onSwipe, dx > 0 ? 'right' : 'left');
+            if (finished) scheduleOnRN(swipeCallback, direction);
           });
         } else {
           translateX.value = withSpring(0);
         }
       },
     })
-  ).current;
+  ).current.panHandlers;
 
   const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value * interpolate(translateX.value, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]),
     transform: [
       { translateX: translateX.value },
       { rotate: `${interpolate(translateX.value, [-200, 200], [-20, 20])}deg` },
     ],
-    opacity: interpolate(translateX.value, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]),
   }));
 
   return (
-    <Animated.View
-      className="absolute w-full h-full py-2"
-      style={[animatedStyle, style]}
-      {...panResponder.panHandlers}
-    >
-      <View className="flex-1 rounded-2xl bg-background-50 dark:bg-background-dark-50 overflow-hidden mt-2 shadow-md">
+    <View className="absolute w-full h-full py-2 z-[1]">
+      <Animated.View
+        className="flex-1 rounded-2xl bg-background-50 dark:bg-background-dark-50 overflow-hidden mt-2 shadow-xl"
+        style={[
+          animatedStyle,
+          {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.25,
+            shadowRadius: 10,
+            elevation: 10,
+          }
+        ]}
+        {...panHandlers}
+      >
         <View className="flex-[4]">
           <Image
             source={{ uri: recipe.image }}
@@ -126,8 +155,8 @@ const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe
             <Text className="text-center text-text-300 dark:text-text-dark-600 text-sm opacity-75 leading-5">Press to view recipe</Text>
           </View>
         </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </View>
   );
 });
 

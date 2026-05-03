@@ -70,7 +70,7 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
 
   if (!recipe) return null;
   return (
-    <View className="absolute inset-0" style={{ zIndex: 999 }}>
+    <View className="absolute inset-0 z-[999]">
       {/* Backdrop */}
       <Animated.View
         style={[{ flex: 1 }]}
@@ -81,7 +81,8 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
       {/* Sheet */}
       <Animated.View
         style={[sheetStyle, { position: 'absolute', bottom: 0, left: 0, right: 0, height: '98%' }]}
-        className="bg-background-50 dark:bg-background-dark-50 overflow-hidden rounded-2xl"
+        className="bg-background-50 dark:bg-background-dark-50 overflow-hidden rounded-2xl z-[999]"
+        pointerEvents={recipe ? 'auto' : 'none'}
       >
         {/* Drag handle */}
         <View {...panResponder.panHandlers} className="items-center pt-3 pb-2 bg-background-50 dark:bg-background-dark-50">
@@ -89,7 +90,7 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
         </View>
 
         <ScrollView
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
           scrollEventThrottle={16}
           bounces={false}
         >
@@ -135,7 +136,6 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
               {recipe.description}
             </Text>
 
-            {/* Placeholder detail sections */}
             <View className='flex-row gap-3'>
               <ChefHat color={isDark ? '#F9FAFB': '#111827'} />
               <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Ingredients</Text>
@@ -153,7 +153,7 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
               <BookText color={isDark ? '#F9FAFB': '#111827'} />
               <Text className="text-xl text-text-900 dark:text-text-dark-900 font-semibold text-text mb-3">Instructions</Text>
             </View>
-            <View className="bg-background-200 dark:bg-background-dark-100 rounded-2xl p-4 mb-8 justify-between">
+            <View className="bg-background-200 dark:bg-background-dark-100 rounded-2xl p-4 justify-between">
               {recipe.instructions.map((instruction, index) =>
                 <View className='mb-6' key={`${recipe.name}_${index}_${instruction}`}>
                   <View className='size-8 bg-primary-500 rounded-full justify-center items-center mb-2'>

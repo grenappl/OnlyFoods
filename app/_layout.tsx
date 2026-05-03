@@ -1,4 +1,5 @@
 import { AuthProvider } from '@/context/AuthProvider';
+import { FavoritesProvider } from '@/context/FavoritesProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -14,7 +15,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Slot />
+        <FavoritesProvider>
+          <Slot />
+        </FavoritesProvider>
       </ThemeProvider>
     </AuthProvider>
   );
