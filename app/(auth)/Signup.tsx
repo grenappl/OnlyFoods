@@ -31,7 +31,9 @@ export default function Login() {
     if (!password) return showError('Please enter your password.');
     if (!confPassword) return showError('Please confirm your password.');
 
-    if (password !== confPassword) return showError("Passwords don't match.")
+    if (!email.includes('@')) return showError('Please enter a valid email address.');
+    if (password.length < 8 || confPassword.length < 8) return showError("Password must be at least 8 characters long.");
+    if (password !== confPassword) return showError("Passwords don't match.");
 
     return true;
   }

@@ -27,6 +27,7 @@ export default function Login() {
   const validateInput = () => {
     if (!email) return showError('Please enter your email address.');
     if (!password) return showError('Please enter your password.');
+    if (!email.includes('@')) return showError('Please enter a valid email address.');
     return true;
   }
 
