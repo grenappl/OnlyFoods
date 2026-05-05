@@ -1,5 +1,15 @@
 import { View, Text, TouchableOpacity, FlatList, Dimensions, Image, Alert } from 'react-native';
-import { Plus, Clock, Users, Pencil, Utensils, Trash2, Heart, Search } from 'lucide-react-native';
+import {
+  Plus,
+  Clock,
+  Users,
+  Pencil,
+  Utensils,
+  Trash2,
+  Heart,
+  Search,
+  UtensilsCrossed,
+} from 'lucide-react-native';
 import { router } from 'expo-router';
 import useTheme from '@/hooks/useTheme';
 import useRecipes from '@/hooks/useRecipes';
@@ -78,8 +88,9 @@ function RecipeCard({
             resizeMode="cover"
           />
         ) : (
-          <View className="h-full w-full items-center justify-center bg-gradient-to-br from-accent-100 to-accent-200 dark:from-accent-900 dark:to-accent-800">
-            <Text style={{ fontSize: 56 }}>🍽️</Text>
+          <View className="h-full w-full items-center justify-center gap-2 bg-gradient-to-br from-accent-100 to-accent-200 dark:from-accent-900 dark:to-accent-800">
+            <UtensilsCrossed size={50} />
+            <Text className="text-sm">No Image Provided</Text>
           </View>
         )}
 
@@ -109,7 +120,7 @@ function RecipeCard({
       <View className="px-4 py-3.5">
         {/* Cuisine Type - Below image */}
         <View className="mb-2 flex-row items-center gap-1.5">
-          <Utensils size={12} color="#2ECC71" />
+          <Utensils size={12} color="#1a1919" />
           <Text className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400">
             {cuisine} Cuisine
           </Text>
@@ -126,16 +137,16 @@ function RecipeCard({
         <View className="flex-row items-center gap-4">
           {recipe.cookTime && (
             <View className="flex-row items-center gap-1.5">
-              <Clock size={14} color="#2ECC71" />
+              <Clock size={14} color="#1a1919" />
               <Text className="text-sm font-medium text-text-600 dark:text-text-dark-400">
-                {recipe.cookTime}
+                {recipe.cookTime} mins
               </Text>
             </View>
           )}
 
           {recipe.servings && (
             <View className="flex-row items-center gap-1.5">
-              <Users size={14} color="#3498DB" />
+              <Users size={14} color="#1a1919" />
               <Text className="text-sm font-medium text-text-600 dark:text-text-dark-400">
                 {recipe.servings}{' '}
                 {typeof recipe.servings === 'number' && recipe.servings > 1
