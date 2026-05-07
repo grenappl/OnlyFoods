@@ -1,5 +1,6 @@
+import useTheme from "@/hooks/useTheme";
 import { RecipeType } from "@/utils/Recipes";
-import { Clock } from "lucide-react-native";
+import { Clock, Users } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface RecipeGridCardType {
@@ -10,6 +11,8 @@ interface RecipeGridCardType {
 }
 
 export default function RecipeGridCard({ recipe, onPress, icon, iconAction }: RecipeGridCardType) {
+  const { isDark } = useTheme()
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -33,10 +36,9 @@ export default function RecipeGridCard({ recipe, onPress, icon, iconAction }: Re
         <TouchableOpacity
           onPress={iconAction}
           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          className="absolute top-2 right-2 size-7 rounded-full bg-background-50/70 dark:bg-background-dark-50/70 items-center justify-center"
+          className="absolute top-2 right-2 size-7 rounded-full bg-black/70 items-center justify-center"
         >
           {icon}
-          {/* <Heart size={14} color="#e74c3c" fill="#e74c3c" /> */}
         </TouchableOpacity>
       </View>
 
@@ -47,9 +49,15 @@ export default function RecipeGridCard({ recipe, onPress, icon, iconAction }: Re
         >
           {recipe.name}
         </Text>
-        <View className="flex-row items-center gap-2">
-          <Clock size={11} color="#9CA3AF" />
-          <Text className="text-xs text-text-400 dark:text-text-dark-500">{recipe.cookTime}</Text>
+        <View className="flex-row gap-3">
+          <View className="flex-row items-center gap-2">
+            <Clock size={11} color={isDark ? '#D1D5DB' : '#374151'} />
+            <Text className="text-xs text-text-600 dark:text-text-dark-700">{recipe.cookTime}</Text>
+          </View>
+          <View className="flex-row items-center gap-1">
+            <Users size={11} color={isDark ? '#D1D5DB' : '#374151'} />
+            <Text className="text-xs text-text-600 dark:text-text-dark-700">{recipe.servings}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>

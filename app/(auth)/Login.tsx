@@ -36,7 +36,7 @@ export default function Login() {
     try {
       // const { user, accessToken } = await yourLoginApi(email, password);
       setAuth({
-        user: { id: '1', name: 'John', email: email },
+        user: { id: '1', name: 'John Doe', email: email, pfp: '' },
         accessToken: 'your-token-here',
       });
       router.replace('/Discover');
@@ -93,8 +93,8 @@ export default function Login() {
                   ? <EyeOff size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />
                   : <Eye size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />
                 }
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <TouchableOpacity

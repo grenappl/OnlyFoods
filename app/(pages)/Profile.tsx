@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
 import {
   User,
   Bell,
@@ -10,17 +10,22 @@ import {
   Heart,
   BookOpen,
   BookHeart,
+  Shield,
 } from 'lucide-react-native';
 import useAuth from '@/hooks/useAuth';
-import { router } from 'expo-router';
 import useTheme from '@/hooks/useTheme';
 import ProfileItem from '@/components/profile/ProfileItem';
 import { useState } from 'react';
 import StatTooltip, { STAT_TOOLTIPS } from '@/components/profile/StatToolTip';
 import EditProfileModal from '@/components/profile/EditProfileModal';
-import { EditProfileContent, LogOutContent } from '@/components/profile/EditContent';
 import useFavorites from '@/hooks/useFavorites';
 import useRecipes from '@/hooks/useRecipes';
+import { EditProfileContent } from '@/components/profile/EditProfileContent';
+import { NotificationsContent } from '@/components/profile/NotificationsContent';
+import { ChangePasswordContent } from '@/components/profile/ChangePasswordContent';
+import { LogOutContent } from '@/components/profile/LogoutContent';
+import { PrivacyContent } from '@/components/profile/PrivacyContent';
+import { HelpSupportContent } from '@/components/profile/HelpSupportContent';
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -65,6 +70,7 @@ export default function ProfilePage() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>();
+  const [pfp, setPfp] = useState(auth?.user?.pfp);
 
   const [tooltip, setTooltip] = useState<StatTooltipProps | null>(null);
 
@@ -80,12 +86,13 @@ export default function ProfilePage() {
       showsVerticalScrollIndicator={false}
     >
       <View className="px-5 pt-16">
-
         {/* Avatar + user info */}
-        <View className="items-center mb-5"> 
-          <View className="size-24 rounded-full bg-accent-500 items-center justify-center mb-4 shadow-md">
-            <User size={44} color="white" />
-          </View>
+        <View className="items-center mb-5">
+          {pfp ||
+            // <Image source={require({ uri: pfp })} className="size-24 rounded-full mb-4" resizeMode="cover" />:
+            <View className="size-24 rounded-full bg-primary-500 items-center justify-center mb-4 shadow-md">
+              <User size={44} color="white" />
+            </View>}
           <Text className="text-xl font-bold text-text-700 dark:text-text-dark-800 mb-1">
             {auth.user?.name}
           </Text>
@@ -132,24 +139,29 @@ export default function ProfilePage() {
         <ProfileItem
           icon={<Bell size={20} color="#F39C12" />}
           label="Notifications"
-          onPress={() => openModal(null)}
+          onPress={() => openModal(<NotificationsContent />)}
         />
         <ProfileItem
           icon={isDark ?
-            <Moon size={18} color={isDark ? '#9CA3AF' : "#4B5563"}/> :
-            <Sun size={18} color={isDark ? '#9CA3AF' : "#4B5563"}/>}
+            <Moon size={18} color={isDark ? '#9CA3AF' : "#4B5563"} /> :
+            <Sun size={18} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label={isDark ? 'Dark Mode' : 'Light Mode'}
           onPress={toggleTheme}
         />
         <ProfileItem
           icon={<Lock size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Privacy"
-          onPress={() => openModal(null)}
+          onPress={() => openModal(<PrivacyContent />)}
+        />
+        <ProfileItem
+          icon={<Shield size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
+          label="Change Password"
+          onPress={() => openModal(<ChangePasswordContent />)}
         />
         <ProfileItem
           icon={<HelpCircle size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Help & Support"
-          onPress={() => openModal(null)}
+          onPress={() => openModal(<HelpSupportContent />)}
         />
 
         {/* Divider */}
