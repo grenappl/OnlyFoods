@@ -1,5 +1,5 @@
 import useTheme from "@/hooks/useTheme";
-import { ChefHat, Clock, PlusCircle, Search, Users, X } from "lucide-react-native";
+import { ChefHat, Clock, PlusCircle, Search, Users, Utensils, X } from "lucide-react-native";
 import { useState } from "react";
 import {
   View,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { ChevronDown, Check } from 'lucide-react-native';
 
 const COOK_TIMES = [
   "Any Time",
@@ -23,14 +24,21 @@ const SERVING_SIZES = [
   "6-7 Servings",
   "8+ Servings",
 ]
+const CUISINES = [
+  'Any type', 'American', 'Chinese', 'Filipino', 'French',
+  'Greek', 'Indian', 'Italian', 'Japanese', 'Korean', 
+  'Mexican', 'Spanish', 'Thai', 'Lebanese', 'Other'
+];
 
 export default function FilterPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [cookTimeRange, setCookTimeRange] = useState<string>(COOK_TIMES[0]);
   const [servingSizeRange, setServingSizeRange] = useState<string>(SERVING_SIZES[0]);
+  const [cuisineTypesRange, setCuisineTypesRange] = useState<string>(CUISINES[0]);
 
   const [ingredientInput, setIngredientInput] = useState("");
   const [ingredients, setIngredients] = useState<string[]>([]);
+  const [cuisineDropdownOpen, setCuisineDropdownOpen] = useState(false);
 
   const { isDark } = useTheme();
 
@@ -44,18 +52,23 @@ export default function FilterPage() {
     setIngredients((prev) => prev.filter((i) => i !== item));
   };
 
-  const handleFilters = () => {
-
-  }
   const resetFilters = () => {
     setSearchQuery("");
     setCookTimeRange(COOK_TIMES[0]);
     setServingSizeRange(SERVING_SIZES[0]);
+    setCuisineTypesRange(CUISINES[0]);
     setIngredients([])
+  }
+  const handleFilters = async () => {
+    try {
+      // backend stuff
+    } catch (e) {
+
+    }
   }
 
   return (
-    <ScrollView className="flex-1 bg-background-200 dark:bg-background-dark-100 pt-8">
+    <ScrollView className="flex-1 bg-background-200 dark:bg-background-dark-100 pt-8" contentContainerStyle={{ paddingBottom: 100 }}>
       <View className="px-4 py-6 gap-6">
         <Text className="text-2xl text-text-700 dark:text-text-dark-900 font-semibold">Find Your Recipe</Text>
 
@@ -134,6 +147,88 @@ export default function FilterPage() {
                 </TouchableOpacity>
               );
             })}
+          </View>
+        </View>
+
+        {/* Cuisine type */}
+        <View className="gap-2">
+        <View className="flex-row gap-2">
+          <Utensils size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
+          <Text className="text-sm text-text-500 dark:text-text-dark-800">Cuisine Type</Text>
+        </View>
+        <View>
+          {/* Trigger */}
+          <TouchableOpacity
+            onPress={() => setCuisineDropdownOpen((prev) => !prev)}
+            className={`flex-row items-center justify-between px-4 py-3 rounded-xl border ${
+              isDark
+                ? 'bg-background-dark-50 border-background-dark-300'
+                : 'bg-background-50 border-text-200'
+            }`}
+          >
+            <Text className={`text-sm ${isDark ? 'text-text-dark-800' : 'text-text-800'}`}>
+              {cuisineTypesRange}
+            </Text>
+            <ChevronDown
+              size={16}
+              color={isDark ? '#9CA3AF' : '#6B7280'}
+              style={{ transform: [{ rotate: cuisineDropdownOpen ? '180deg' : '0deg' }] }}
+            />
+          </TouchableOpacity>
+
+          {/* Options list */}
+          {cuisineDropdownOpen && (
+            <View
+              className={`mt-1 rounded-xl border overflow-hidden ${
+                isDark
+                  ? 'bg-background-dark-50 border-background-dark-300'
+                  : 'bg-background-50 border-text-200'
+              }`}
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              {CUISINES.map((cuisine, index) => {
+                const isSelected = cuisineTypesRange === cuisine;
+                return (
+                  <TouchableOpacity
+                    key={cuisine}
+                    onPress={() => {
+                      setCuisineTypesRange(cuisine);
+                      setCuisineDropdownOpen((prev) => !prev)
+                    }}
+                    className={`flex-row items-center justify-between px-4 py-3 ${
+                      index < CUISINES.length - 1
+                        ? isDark
+                          ? 'border-b border-background-dark-300'
+                          : 'border-b border-background-200'
+                        : ''
+                    } ${isSelected
+                        ? isDark ? 'bg-primary-900' : 'bg-primary-50'
+                        : ''
+                    }`}
+                  >
+                    <Text
+                      className={`text-sm ${
+                        isSelected
+                          ? 'text-primary-600 dark:text-primary-300 font-semibold'
+                          : isDark ? 'text-text-dark-800' : 'text-text-800'
+                      }`}
+                    >
+                      {cuisine}
+                    </Text>
+                    {isSelected && (
+                      <Check size={14} color={isDark ? '#F8C471' : '#D68910'} />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
           </View>
         </View>
 
