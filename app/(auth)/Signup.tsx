@@ -6,6 +6,7 @@ import useTheme from '@/hooks/useTheme';
 import { Eye, EyeOff } from 'lucide-react-native';
 import AuthThemeSwitch from '@/components/AuthThemeSwitch';
 import ErrorModal from '@/components/ErrorModal';
+import { publicApi } from '@/utils/api';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -32,8 +33,8 @@ export default function Login() {
     if (!confPassword) return showError('Please confirm your password.');
 
     if (!email.includes('@')) return showError('Please enter a valid email address.');
-    if (password.length < 8 || confPassword.length < 8) return showError("Password must be at least 8 characters long.");
     if (password !== confPassword) return showError("Passwords don't match.");
+    if (password.length < 8 || confPassword.length < 8) return showError("Password must be at least 8 characters long.");
 
     return true;
   }
@@ -41,10 +42,15 @@ export default function Login() {
   const handleSignup = async () => {
     if(!validateInput()) return;
     try {
-      // smth here
+      await publicApi.post('/auth/register', {
+        email: email,
+        password: password,
+        username: username
+      })
       router.back()
     } catch (e: any) {
-      showError(e?.message ?? 'Invalid email or password. Please try again.');
+      console.log(e)
+      showError(e?.message);
     }
   };
 

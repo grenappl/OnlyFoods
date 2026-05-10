@@ -7,6 +7,8 @@ import useTheme from '@/hooks/useTheme';
 import AuthThemeSwitch from '@/components/AuthThemeSwitch';
 import { Eye, EyeOff } from 'lucide-react-native';
 import ErrorModal from '@/components/ErrorModal';
+import { publicApi } from '@/utils/api';
+import { AuthState } from '@/context/AuthProvider';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -34,10 +36,13 @@ export default function Login() {
   const handleLogin = async () => {
     if(!validateInput()) return;
     try {
-      // const { user, accessToken } = await yourLoginApi(email, password);
+      const res: AuthState = await publicApi.post('/auth/login', {
+        email: email,
+        password: password
+      })
       setAuth({
-        user: { id: '1', name: 'John Doe', email: email, pfp: '' },
-        accessToken: 'your-token-here',
+        user: res.user,
+        accessToken: res.access_token,
       });
       router.replace('/Discover');
     } catch (e: any) {
