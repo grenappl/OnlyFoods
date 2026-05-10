@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { privateApi } from '@/utils/api';
 
 export interface AuthState {
   user?: {
@@ -65,7 +66,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [auth]);
 
   const logout = async () => {
-    setAuth({});
+    try {
+      await privateApi.post('/auth/logout');
+      setAuth({});
+      console.log('logout!')
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Button, Modal } from 'react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -7,7 +7,7 @@ import useTheme from '@/hooks/useTheme';
 import AuthThemeSwitch from '@/components/AuthThemeSwitch';
 import { Eye, EyeOff } from 'lucide-react-native';
 import ErrorModal from '@/components/ErrorModal';
-import { publicApi } from '@/utils/api';
+import { privateApi, publicApi } from '@/utils/api';
 import { AuthState } from '@/context/AuthProvider';
 
 export default function Login() {
@@ -36,17 +36,20 @@ export default function Login() {
   const handleLogin = async () => {
     if(!validateInput()) return;
     try {
-      const res: AuthState = await publicApi.post('/auth/login', {
+      const resToken = await publicApi.post('/auth/login', {
         email: email,
         password: password
       })
+      const resUser = await privateApi.get('/profiles/me');
+      console.log(resUser.data)
       setAuth({
-        user: res.user,
-        accessToken: res.access_token,
+        user: resUser.data,
+        accessToken: resToken.access_token,
       });
       router.replace('/Discover');
     } catch (e: any) {
-      showError(e?.message ?? 'Invalid email or password. Please try again.');
+      console.log(e)
+      showError(e?.message);
     }
   };
 

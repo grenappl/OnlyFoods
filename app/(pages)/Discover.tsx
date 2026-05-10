@@ -8,6 +8,7 @@ import RecipeDetails from '@/components/RecipeDetails';
 import useAuth from '@/hooks/useAuth';
 import { RecipeType } from '@/utils/Recipes';
 import useFavorites from '@/hooks/useFavorites';
+import { privateApi } from '@/utils/api';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,7 +34,10 @@ export default function DiscoverPage() {
   };
 
   useEffect(() => {
-    console.log(auth)
+    async function me(){
+      console.log(await privateApi.get('/profiles/me'))
+    }
+    me()
   }, [])
 
 {/* {recipes.slice(currentIndex, currentIndex + 3).map((recipe, index) => (
