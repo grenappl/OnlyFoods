@@ -21,6 +21,24 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_MARGIN = 16;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 
+// Array of cuisine types starting with Pinoy
+const CUISINE_TYPES = [
+  'American',
+  'Chinese',
+  'Filipino',
+  'French',
+  'Greek',
+  'Indian',
+  'Italian',
+  'Japanese',
+  'Korean',
+  'Mexican',
+  'Spanish',
+  'Thai',
+  'Lebanese',
+  'Other',
+];
+
 function RecipeCard({
   recipe,
   onPress,
@@ -36,6 +54,9 @@ function RecipeCard({
 }) {
   // Default cuisine types - replace with recipe.cuisine if available
   const getCuisineType = () => {
+    // If recipe has cuisine property, use it
+    if (recipe.cuisine) return recipe.cuisine;
+
     const cuisineMap: { [key: string]: string } = {
       Pizza: 'Italian',
       Pasta: 'Italian',
@@ -44,7 +65,10 @@ function RecipeCard({
       Curry: 'Indian',
       'Stir Fry': 'Chinese',
       Burger: 'American',
-      Salad: 'International',
+      Adobo: 'Pinoy',
+      Sinigang: 'Pinoy',
+      Lechon: 'Pinoy',
+      Salad: 'Pinoy',
     };
 
     for (const [key, value] of Object.entries(cuisineMap)) {
@@ -52,11 +76,11 @@ function RecipeCard({
         return value;
       }
     }
-    return 'International';
+    return 'Pinoy'; // Changed from 'International' to 'Pinoy'
   };
 
   const cuisine = getCuisineType();
-  const favorites = recipe.favorites || Math.floor(Math.random() * 100) + 1; // Example favorites count
+  const favorites = recipe.favorites || Math.floor(Math.random() * 100) + 1;
 
   const handleDelete = () => {
     Alert.alert('Delete Recipe', `Are you sure you want to delete "${recipe.name}"?`, [
@@ -163,19 +187,16 @@ function RecipeCard({
 
 export default function MyRecipesPage() {
   const { isDark } = useTheme();
-  const { recipes, removeRecipe } = useRecipes(); // Assuming deleteRecipe is available from your hook
+  const { recipes, removeRecipe } = useRecipes();
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
 
   const handleCreate = () => router.push('/RecipeEditor');
 
   const handleDeleteRecipe = (recipeId: number) => {
-    // Call your delete function from the recipes hook
     if (removeRecipe) {
       removeRecipe(recipeId);
     } else {
-      // If deleteRecipe doesn't exist in your hook, you can implement it
       console.log('Delete recipe:', recipeId);
-      // You might need to implement the deletion logic here
     }
   };
 
