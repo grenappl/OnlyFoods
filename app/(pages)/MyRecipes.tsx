@@ -23,20 +23,19 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 
 // Array of cuisine types starting with Pinoy
 const CUISINE_TYPES = [
-  'Pinoy',
+  'American',
+  'Chinese',
+  'Filipino',
+  'French',
+  'Greek',
+  'Indian',
   'Italian',
   'Japanese',
-  'Mexican',
-  'Indian',
-  'Chinese',
-  'American',
-  'French',
-  'Thai',
-  'Greek',
-  'Spanish',
-  'Mediterranean',
-  'Vietnamese',
   'Korean',
+  'Mexican',
+  'Spanish',
+  'Thai',
+  'Lebanese',
   'Other',
 ];
 

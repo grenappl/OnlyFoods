@@ -18,22 +18,20 @@ import useTheme from '@/hooks/useTheme';
 import useRecipes from '@/hooks/useRecipes';
 import ErrorModal from '@/components/ErrorModal';
 
-// Simple array of cuisine types starting with Pinoy
 const CUISINE_TYPES = [
-  'Pinoy',
+  'American',
+  'Chinese',
+  'Filipino',
+  'French',
+  'Greek',
+  'Indian',
   'Italian',
   'Japanese',
-  'Mexican',
-  'Indian',
-  'Chinese',
-  'American',
-  'French',
-  'Thai',
-  'Greek',
-  'Spanish',
-  'Mediterranean',
-  'Vietnamese',
   'Korean',
+  'Mexican',
+  'Spanish',
+  'Thai',
+  'Lebanese',
   'Other',
 ];
 
@@ -46,7 +44,7 @@ export default function RecipeEditorPage() {
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [cuisine, setCuisine] = useState('Pinoy'); // Start with Pinoy
+  const [cuisine, setCuisine] = useState('American');
   const [cookTime, setCookTime] = useState('');
   const [servings, setServings] = useState('');
   const [ingredients, setIngredients] = useState(['']);
@@ -54,6 +52,7 @@ export default function RecipeEditorPage() {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showCuisineModal, setShowCuisineModal] = useState(false);
+  const [descHeight, setDescHeight] = useState(96);
 
   // Populate fields if editing
   useEffect(() => {
@@ -63,7 +62,7 @@ export default function RecipeEditorPage() {
         setImage(recipe.image ?? '');
         setName(recipe.name);
         setDescription(recipe.description);
-        setCuisine(recipe.cuisine || 'Pinoy'); // Default to Pinoy if no cuisine set
+        setCuisine(recipe.cuisineType || 'American'); // Default to Pinoy if no cuisine set
         setCookTime(recipe.cookTime);
         setServings(String(recipe.servings));
         setIngredients(recipe.ingredients);
@@ -99,7 +98,7 @@ export default function RecipeEditorPage() {
 
     const recipe = {
       name: name.trim(),
-      description,
+      description: description.trim(),
       cuisine, // Add cuisine to the recipe
       cookTime,
       servings: Number(servings),
@@ -202,9 +201,12 @@ export default function RecipeEditorPage() {
                 placeholder="Describe your recipe..."
                 placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
                 multiline
-                numberOfLines={4}
                 textAlignVertical="top"
-                className={`${inputClass} h-24`}
+                onContentSizeChange={(e) => setDescHeight(e.nativeEvent.contentSize.height)}
+                style={{
+                  height: Math.max(96, descHeight),
+                }}
+                className={inputClass}
               />
             </View>
 
