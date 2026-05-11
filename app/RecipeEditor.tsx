@@ -8,13 +8,34 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, ImagePlus, Plus, X } from 'lucide-react-native';
+import { ArrowLeft, ImagePlus, Plus, X, ChevronDown, Utensils, Check } from 'lucide-react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import useTheme from '@/hooks/useTheme';
 import useRecipes from '@/hooks/useRecipes';
 import ErrorModal from '@/components/ErrorModal';
+
+// Simple array of cuisine types starting with Pinoy
+const CUISINE_TYPES = [
+  'Pinoy',
+  'Italian',
+  'Japanese',
+  'Mexican',
+  'Indian',
+  'Chinese',
+  'American',
+  'French',
+  'Thai',
+  'Greek',
+  'Spanish',
+  'Mediterranean',
+  'Vietnamese',
+  'Korean',
+  'Other',
+];
 
 export default function RecipeEditorPage() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -25,12 +46,14 @@ export default function RecipeEditorPage() {
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [cuisine, setCuisine] = useState('Pinoy'); // Start with Pinoy
   const [cookTime, setCookTime] = useState('');
   const [servings, setServings] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   const [instructions, setInstructions] = useState(['']);
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showCuisineModal, setShowCuisineModal] = useState(false);
 
   // Populate fields if editing
   useEffect(() => {
@@ -40,6 +63,7 @@ export default function RecipeEditorPage() {
         setImage(recipe.image ?? '');
         setName(recipe.name);
         setDescription(recipe.description);
+        setCuisine(recipe.cuisine || 'Pinoy'); // Default to Pinoy if no cuisine set
         setCookTime(recipe.cookTime);
         setServings(String(recipe.servings));
         setIngredients(recipe.ingredients);
@@ -51,7 +75,7 @@ export default function RecipeEditorPage() {
   const pickImage = async () => {
     const pickedFile = await DocumentPicker.getDocumentAsync({
       type: 'image/*',
-      copyToCacheDirectory: true, // Ensures file is readable by expo-file-system
+      copyToCacheDirectory: true,
       multiple: false,
     });
     console.log(pickedFile);
@@ -70,23 +94,25 @@ export default function RecipeEditorPage() {
     if (description.trim().length === 0) return showError('Please enter a recipe description.');
     if (servings.length === 0) return showError('Please enter the serving amount.');
     if (ingredients[0].trim().length === 0) return showError('Please enter at least 1 ingredient.');
-    if (instructions[0].trim().length === 0) return showError('Please enter the 1st step.');
+    if (instructions[0].trim().length === 0) return showError('Please enter the first step.');
     if (!name.trim()) return;
+
     const recipe = {
       name: name.trim(),
       description,
+      cuisine, // Add cuisine to the recipe
       cookTime,
       servings: Number(servings),
       image,
       ingredients: ingredients.filter((i) => i.trim()),
       instructions: instructions.filter((i) => i.trim()),
     };
+
     if (isEditing) {
       updateRecipe(Number(id), recipe);
     } else {
       addRecipe(recipe);
     }
-    //router.back();
     router.replace('/MyRecipes');
   };
 
@@ -96,6 +122,11 @@ export default function RecipeEditorPage() {
 
   const updateInstruction = (text: string, index: number) => {
     setInstructions((prev) => prev.map((v, i) => (i === index ? text : v)));
+  };
+
+  const handleCuisineSelect = (selectedCuisine: string) => {
+    setCuisine(selectedCuisine);
+    setShowCuisineModal(false);
   };
 
   const inputClass =
@@ -175,6 +206,24 @@ export default function RecipeEditorPage() {
                 textAlignVertical="top"
                 className={`${inputClass} h-24`}
               />
+            </View>
+
+            {/* Cuisine Type Select Field */}
+            <View className="gap-2">
+              <Text className="text-sm font-semibold text-text-800 dark:text-text-dark-800">
+                Cuisine Type
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowCuisineModal(true)}
+                className="flex-row items-center justify-between rounded-2xl border border-text-100 bg-background-100 px-4 py-3 dark:border-background-dark-300 dark:bg-background-dark-50">
+                <View className="flex-row items-center gap-2">
+                  <Utensils size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
+                  <Text className="text-sm text-text-800 dark:text-text-dark-800">
+                    {cuisine} Cuisine
+                  </Text>
+                </View>
+                <ChevronDown size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
+              </TouchableOpacity>
             </View>
 
             {/* Cook Time + Servings */}
@@ -283,6 +332,50 @@ export default function RecipeEditorPage() {
             </View>
           </View>
         </ScrollView>
+
+        {/* Cuisine Selection Modal */}
+        <Modal
+          visible={showCuisineModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowCuisineModal(false)}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setShowCuisineModal(false)}
+            className="flex-1 justify-end bg-black/50">
+            <View className="rounded-t-3xl bg-white dark:bg-background-dark-200">
+              <View className="flex-row items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
+                <Text className="text-lg font-semibold text-text-800 dark:text-text-dark-800">
+                  Select Cuisine Type
+                </Text>
+                <TouchableOpacity onPress={() => setShowCuisineModal(false)}>
+                  <X size={24} color={isDark ? '#E5E7EB' : '#2C3E50'} />
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                data={CUISINE_TYPES}
+                keyExtractor={(item) => item}
+                renderItem={({ item: cuisineType }) => (
+                  <TouchableOpacity
+                    onPress={() => handleCuisineSelect(cuisineType)}
+                    className={`flex-row items-center justify-between border-b border-gray-100 p-4 dark:border-gray-800 ${
+                      cuisine === cuisineType ? 'bg-accent-50 dark:bg-accent-900/20' : ''
+                    }`}>
+                    <View className="flex-row items-center gap-3">
+                      <Utensils size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
+                      <Text className="text-base text-text-700 dark:text-text-dark-700">
+                        {cuisineType}
+                      </Text>
+                    </View>
+                    {cuisine === cuisineType && <Check size={20} color="#2ECC71" />}
+                  </TouchableOpacity>
+                )}
+                style={{ maxHeight: 400 }}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
         <ErrorModal
           visible={errorVisible}
           message={errorMessage}
