@@ -25,9 +25,9 @@ const SERVING_SIZES = [
   "8+ Servings",
 ]
 const CUISINES = [
-  'Any type', 'American', 'Chinese', 'Filipino', 'French',
-  'Greek', 'Indian', 'Italian', 'Japanese', 'Korean', 
-  'Mexican', 'Spanish', 'Thai', 'Lebanese', 'Other'
+  'American', 'Chinese', 'Filipino', 'French',
+  'Greek', 'Indian', 'Italian', 'Japanese', 
+  'Korean', 'Mexican', 'Spanish', 'Thai'
 ];
 
 export default function FilterPage() {
@@ -38,7 +38,8 @@ export default function FilterPage() {
 
   const [ingredientInput, setIngredientInput] = useState("");
   const [ingredients, setIngredients] = useState<string[]>([]);
-  const [cuisineDropdownOpen, setCuisineDropdownOpen] = useState(false);
+  const [cuisineSearch, setCuisineSearch] = useState('');
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
 
   const { isDark } = useTheme();
 
@@ -52,11 +53,21 @@ export default function FilterPage() {
     setIngredients((prev) => prev.filter((i) => i !== item));
   };
 
+  const addCuisine = (cuisine: string) => {
+    if (selectedCuisines.includes(cuisine)) return;
+    setSelectedCuisines((prev) => [...prev, cuisine]);
+    setCuisineSearch('');
+  };
+  const removeCuisine = (cuisine: string) => {
+    setSelectedCuisines((prev) => prev.filter((c) => c !== cuisine));
+  };
+
   const resetFilters = () => {
-    setSearchQuery("");
+    setSearchQuery('');
     setCookTimeRange(COOK_TIMES[0]);
     setServingSizeRange(SERVING_SIZES[0]);
-    setCuisineTypesRange(CUISINES[0]);
+    setSelectedCuisines([]);
+    setCuisineSearch('');
     setIngredients([])
   }
   const handleFilters = async () => {
@@ -77,7 +88,7 @@ export default function FilterPage() {
             <Search size={18} color={isDark ? '#9CA3AF' : "#6B7280"} />
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Search</Text>
           </View>
-          <View className="flex-row items-center bg-background-50 dark:bg-background-dark-50 border border-text-200 dark:border-background-dark-300 rounded-xl px-4">
+          <View className="flex-row items-center bg-background-50 dark:bg-background-dark-50 border border-text-200 dark:border-background-dark-300 rounded-full px-4">
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -85,6 +96,14 @@ export default function FilterPage() {
               placeholderTextColor={isDark ? '#6B7280' : "#9CA3AF"}
               className="flex-1 py-3 text-sm text-text-500 dark:text-text-dark-700"
             />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setSearchQuery('')}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <X size={16} color={isDark ? '#6B7280' : '#9CA3AF'} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -150,36 +169,36 @@ export default function FilterPage() {
           </View>
         </View>
 
-        {/* Cuisine type */}
+        {/* cuisine search */}
         <View className="gap-2">
-        <View className="flex-row gap-2">
-          <Utensils size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
-          <Text className="text-sm text-text-500 dark:text-text-dark-800">Cuisine Type</Text>
-        </View>
-        <View>
-          {/* Trigger */}
-          <TouchableOpacity
-            onPress={() => setCuisineDropdownOpen((prev) => !prev)}
-            className={`flex-row items-center justify-between px-4 py-3 rounded-xl border ${
-              isDark
-                ? 'bg-background-dark-50 border-background-dark-300'
-                : 'bg-background-50 border-text-200'
-            }`}
-          >
-            <Text className={`text-sm ${isDark ? 'text-text-dark-800' : 'text-text-800'}`}>
-              {cuisineTypesRange}
-            </Text>
-            <ChevronDown
-              size={16}
-              color={isDark ? '#9CA3AF' : '#6B7280'}
-              style={{ transform: [{ rotate: cuisineDropdownOpen ? '180deg' : '0deg' }] }}
-            />
-          </TouchableOpacity>
+          <View className="flex-row gap-2">
+            <Utensils size={18} color={isDark ? '#9CA3AF' : '#6B7280'} />
+            <Text className="text-sm text-text-500 dark:text-text-dark-800">Cuisine Type</Text>
+          </View>
 
-          {/* Options list */}
-          {cuisineDropdownOpen && (
+          {/* Search input */}
+          <View className="flex-row items-center bg-background-50 dark:bg-background-dark-50 border border-text-200 dark:border-background-dark-300 rounded-xl px-4">
+            <TextInput
+              value={cuisineSearch}
+              onChangeText={setCuisineSearch}
+              placeholder="Search cuisine type..."
+              placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
+              className="flex-1 py-3 text-sm text-text-500 dark:text-text-dark-700"
+            />
+            {cuisineSearch.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setCuisineSearch('')}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <X size={16} color={isDark ? '#6B7280' : '#9CA3AF'} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Search results */}
+          {cuisineSearch.length > 0 && (
             <View
-              className={`mt-1 rounded-xl border overflow-hidden ${
+              className={`rounded-xl border overflow-hidden ${
                 isDark
                   ? 'bg-background-dark-50 border-background-dark-300'
                   : 'bg-background-50 border-text-200'
@@ -192,44 +211,50 @@ export default function FilterPage() {
                 elevation: 4,
               }}
             >
-              {CUISINES.map((cuisine, index) => {
-                const isSelected = cuisineTypesRange === cuisine;
-                return (
-                  <TouchableOpacity
-                    key={cuisine}
-                    onPress={() => {
-                      setCuisineTypesRange(cuisine);
-                      setCuisineDropdownOpen((prev) => !prev)
-                    }}
-                    className={`flex-row items-center justify-between px-4 py-3 ${
-                      index < CUISINES.length - 1
-                        ? isDark
-                          ? 'border-b border-background-dark-300'
-                          : 'border-b border-background-200'
-                        : ''
-                    } ${isSelected
-                        ? isDark ? 'bg-primary-900' : 'bg-primary-50'
-                        : ''
-                    }`}
-                  >
-                    <Text
-                      className={`text-sm ${
-                        isSelected
-                          ? 'text-primary-600 dark:text-primary-300 font-semibold'
-                          : isDark ? 'text-text-dark-800' : 'text-text-800'
-                      }`}
-                    >
-                      {cuisine}
-                    </Text>
-                    {isSelected && (
-                      <Check size={14} color={isDark ? '#F8C471' : '#D68910'} />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
+              {CUISINES.filter((c) =>
+                c.toLowerCase().includes(cuisineSearch.toLowerCase()) &&
+                !selectedCuisines.includes(c)
+              ).map((cuisine, index, filtered) => (
+                <TouchableOpacity
+                  key={cuisine}
+                  onPress={() => addCuisine(cuisine)}
+                  className={`flex-row items-center px-4 py-3 ${
+                    index < filtered.length - 1
+                      ? isDark
+                        ? 'border-b border-background-dark-300'
+                        : 'border-b border-background-200'
+                      : ''
+                  }`}
+                >
+                  <Text className={`text-sm ${isDark ? 'text-text-dark-800' : 'text-text-800'}`}>
+                    {cuisine}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           )}
-          </View>
+
+          {/* Selected chips */}
+          {selectedCuisines.length > 0 && (
+            <View className="flex-row flex-wrap gap-2 mt-1">
+              {selectedCuisines.map((cuisine) => (
+                <View
+                  key={cuisine}
+                  className="flex-row items-center gap-1 bg-primary-100 dark:bg-primary-900 px-3 py-1.5 rounded-xl"
+                >
+                  <Text className="text-sm text-primary-800 dark:text-primary-100">
+                    {cuisine}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => removeCuisine(cuisine)}
+                    hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                  >
+                    <X size={12} color={isDark ? '#FDEBD0' : '#9C640C'} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         <View className="gap-2">
@@ -259,7 +284,7 @@ export default function FilterPage() {
               {ingredients.map((item) => (
                 <View
                   key={item}
-                  className="flex-row items-center gap-1 bg-primary-100 dark:bg-primary-900 px-3 py-1.5 rounded-full"
+                  className="flex-row items-center gap-1 bg-primary-100 dark:bg-primary-900 px-3 py-1.5 rounded-xl"
                 >
                   <Text className="text-sm text-primary-800 dark:text-primary-100 capitalize">
                     {item}

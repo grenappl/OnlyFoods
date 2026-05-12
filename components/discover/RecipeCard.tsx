@@ -140,7 +140,10 @@ const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe
               </View>
               <View className="flex-row items-center gap-2">
                 <Heart size={20} color="white" fill="white"/>
-                <Text className="text-md text-white">0</Text>
+                <Text className="text-md text-white">{
+                    recipe.favorites < 10000 ? 
+                      recipe.favorites : (recipe.favorites / 1000).toFixed(1) + "k"
+                }</Text>
               </View>
             </View>
           </View>

@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react-native';
 import AuthThemeSwitch from '@/components/AuthThemeSwitch';
 import ErrorModal from '@/components/ErrorModal';
 import { publicApi } from '@/utils/api';
+import { ActivityIndicator } from 'react-native';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -19,6 +20,7 @@ export default function Login() {
   const [secureConfPassword, setSecureConfPassword] = useState(true);
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const showError = (message: string) => {
     setErrorMessage(message);
@@ -41,6 +43,7 @@ export default function Login() {
 
   const handleSignup = async () => {
     if(!validateInput()) return;
+    setIsLoading(true);
     try {
       await publicApi.post('/auth/register', {
         email: email,
@@ -51,6 +54,8 @@ export default function Login() {
     } catch (e: any) {
       console.log(e)
       showError(e?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,11 +147,17 @@ export default function Login() {
           </View>
 
           <TouchableOpacity
-            className="bg-primary-500 py-4 px-6 rounded-xl items-center mt-3"
+            className="bg-primary-500 py-4 px-6 rounded-xl items-center justify-center mt-3"
             onPress={handleSignup}
             activeOpacity={0.8}
+            disabled={isLoading}
+            style={{ opacity: isLoading ? 0.7 : 1 }}
           >
-            <Text className="text-lg font-semibold text-text-50">Sign Up</Text>
+            {isLoading ? (
+              <ActivityIndicator color="white" size={23} />
+            ) : (
+              <Text className="text-base font-semibold text-text-50">Sign Up</Text>
+            )}
           </TouchableOpacity>
         </View>
 

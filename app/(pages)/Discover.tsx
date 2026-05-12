@@ -5,7 +5,6 @@ import RecipeCard, { RecipeCardRef } from '@/components/discover/RecipeCard';
 import { Heart, X } from 'lucide-react-native';
 import recipes from '@/utils/Recipes';
 import RecipeDetails from '@/components/RecipeDetails';
-import useAuth from '@/hooks/useAuth';
 import { RecipeType } from '@/utils/Recipes';
 import useFavorites from '@/hooks/useFavorites';
 import { privateApi } from '@/utils/api';
@@ -16,7 +15,6 @@ export default function DiscoverPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
 
   const cardRef = useRef<RecipeCardRef>(null);
-  const { auth } = useAuth()
   const { addFavorite } = useFavorites()
 
   const handleSwipe = (direction: 'left' | 'right') => {
@@ -39,20 +37,6 @@ export default function DiscoverPage() {
     }
     me()
   }, [])
-
-{/* {recipes.slice(currentIndex, currentIndex + 3).map((recipe, index) => (
-<RecipeCard
-  key={recipe.id}
-  ref={index === 0 ? cardRef : undefined}
-  recipe={recipe}
-  onSwipe={handleSwipe}
-  onPress={() => setSelectedRecipe(recipe)}
-  style={{
-    zIndex: recipes.length - index,
-    transform: [{ scale: 1 - index * 0.05 }]
-  }}
-/>
-))} */}
 
   return (
     <View className="flex-1 bg-background-200 dark:bg-background-dark-100 items-center justify-center px-4 overflow-hidden">

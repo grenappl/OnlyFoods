@@ -9,6 +9,7 @@ import { Eye, EyeOff } from 'lucide-react-native';
 import ErrorModal from '@/components/ErrorModal';
 import { privateApi, publicApi } from '@/utils/api';
 import { AuthState } from '@/context/AuthProvider';
+import { ActivityIndicator } from 'react-native';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ export default function Login() {
   const [securePassword, setSecurePassword] = useState(true);
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const showError = (message: string) => {
     setErrorMessage(message);
@@ -34,24 +36,39 @@ export default function Login() {
   }
 
   const handleLogin = async () => {
-    if(!validateInput()) return;
+    if (!validateInput()) return;
+    setIsLoading(true);
     try {
-      const resToken = await publicApi.post('/auth/login', {
+      const resToken: { access_token: string } = await publicApi.post('/auth/login', {
         email: email,
-        password: password
-      })
+        password: password,
+      });
       const resUser = await privateApi.get('/profiles/me');
-      console.log(resUser.data)
       setAuth({
         user: resUser.data,
         accessToken: resToken.access_token,
       });
       router.replace('/Discover');
     } catch (e: any) {
-      console.log(e)
+      console.log(e);
       showError(e?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    async function eee(){
+      try {
+        await privateApi.post('/auth/logout');
+        setAuth({});
+        console.log('logout!')
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    eee()
+  }, [])
 
   return (
     <ScrollView
@@ -106,11 +123,17 @@ export default function Login() {
           </View>
 
           <TouchableOpacity
-            className="bg-primary-500 py-4 px-6 rounded-xl items-center mt-3"
             onPress={handleLogin}
+            disabled={isLoading}
             activeOpacity={0.8}
+            className="bg-primary-500 py-4 px-6 rounded-xl items-center justify-center mt-3"
+            style={{ opacity: isLoading ? 0.7 : 1 }}
           >
-            <Text className="text-lg font-semibold text-text-50">Sign In</Text>
+            {isLoading ? (
+              <ActivityIndicator color="white" size={23} />
+            ) : (
+              <Text className="text-white font-semibold text-base">Sign In</Text>
+            )}
           </TouchableOpacity>
         </View>
 

@@ -34,28 +34,6 @@ function RecipeCard({
   onDelete: () => void;
   isDark: boolean;
 }) {
-  // Default cuisine types - replace with recipe.cuisine if available
-  const getCuisineType = () => {
-    const cuisineMap: { [key: string]: string } = {
-      Pizza: 'Italian',
-      Pasta: 'Italian',
-      Sushi: 'Japanese',
-      Taco: 'Mexican',
-      Curry: 'Indian',
-      'Stir Fry': 'Chinese',
-      Burger: 'American',
-      Salad: 'International',
-    };
-
-    for (const [key, value] of Object.entries(cuisineMap)) {
-      if (recipe.name.includes(key)) {
-        return value;
-      }
-    }
-    return 'International';
-  };
-
-  const cuisine = getCuisineType();
   const favorites = recipe.favorites || Math.floor(Math.random() * 100) + 1; // Example favorites count
 
   const handleDelete = () => {
@@ -122,7 +100,7 @@ function RecipeCard({
         <View className="mb-2 flex-row items-center gap-1.5">
           <Utensils size={12} color="#1a1919" />
           <Text className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400">
-            {cuisine} Cuisine
+            {recipe.cuisineType} Cuisine
           </Text>
         </View>
 
@@ -139,7 +117,7 @@ function RecipeCard({
             <View className="flex-row items-center gap-1.5">
               <Clock size={14} color="#1a1919" />
               <Text className="text-sm font-medium text-text-600 dark:text-text-dark-400">
-                {recipe.cookTime} mins
+                {recipe.cookTime}
               </Text>
             </View>
           )}
@@ -180,9 +158,9 @@ export default function MyRecipesPage() {
   };
 
   return (
-    <View className="flex-1 bg-background-100 dark:bg-background-dark-100">
+    <View className="flex-1 bg-background-200 dark:bg-background-dark-100">
       {/* Header with gradient background */}
-      <View className="bg-gradient-to-b from-accent-500/10 via-transparent to-transparent px-4 pb-6 pt-12">
+      <View className="bg-gradient-to-b from-accent-500/10 via-transparent to-transparent px-4 pb-6 pt-6">
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-3xl font-bold text-text-800 dark:text-text-dark-800">

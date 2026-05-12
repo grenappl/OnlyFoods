@@ -14,10 +14,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BookText, ChefHat, Clock, Dot, Heart, Info, Users, X } from 'lucide-react-native';
+import { BookText, ChefHat, Clock, Dot, Heart, Info, Users, Utensils, X } from 'lucide-react-native';
 import { scheduleOnRN } from 'react-native-worklets';
 import useTheme from '@/hooks/useTheme';
-import RECIPES, { RecipeType } from '@/utils/Recipes';
+import { RecipeType } from '@/utils/Recipes';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const DISMISS_THRESHOLD = 120;
@@ -117,10 +117,17 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
                     <Users color='white' size={16}/>
                     <Text className="text-white text-sm">{recipe.servings} servings</Text>
                   </View>
+                  <View className="flex-row items-center gap-2">
+                    <Utensils color='white' size={16}/>
+                    <Text className="text-white text-sm">{recipe.cuisineType}</Text>
+                  </View>
                 </View>
                 <View className="flex-row items-center gap-2">
                   <Heart size={20} color="white" fill="white"/>
-                  <Text className="text-md text-white">0</Text>
+                  <Text className="text-md text-white">{
+                    recipe.favorites < 10000 ? 
+                      recipe.favorites : (recipe.favorites / 1000).toFixed(1) + "k"
+                  }</Text>
                 </View>
               </View>
             </View>

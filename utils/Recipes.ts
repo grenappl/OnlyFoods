@@ -7,6 +7,9 @@ export interface RecipeType {
   description: string;
   ingredients: string[];
   instructions: string[];
+  cuisineType: string;
+  favorites: number;
+  // isPublic: boolean;
 }
 
 const RECIPES: RecipeType[] = [
@@ -32,6 +35,8 @@ const RECIPES: RecipeType[] = [
       "Stir in parmesan cheese.",
       "Combine with pasta and season to taste.",
     ],
+    cuisineType: "Filipino",
+    favorites: 31251
   },
   {
     id: 2,
@@ -55,6 +60,8 @@ const RECIPES: RecipeType[] = [
       "Simmer for 10 minutes.",
       "Mix pasta with sauce and garnish with basil.",
     ],
+    cuisineType: "Filipino",
+    favorites: 6
   },
   {
     id: 3,
@@ -78,6 +85,8 @@ const RECIPES: RecipeType[] = [
       "Pour into pans and bake for 30-35 minutes.",
       "Cool and frost between layers.",
     ],
+    cuisineType: "Filipino",
+    favorites: 2
   },
   {
     id: 4,
@@ -101,6 +110,8 @@ const RECIPES: RecipeType[] = [
       "Bake until cheese melts.",
       "Serve with sour cream and salsa.",
     ],
+    cuisineType: "Filipino",
+    favorites: 23
   },
   {
     id: 5,
@@ -123,6 +134,8 @@ const RECIPES: RecipeType[] = [
       "Top with fresh berries.",
       "Brush with glaze before serving.",
     ],
+    cuisineType: "Filipino",
+    favorites: 8
   },
   {
     id: 6,
@@ -146,6 +159,8 @@ const RECIPES: RecipeType[] = [
       "Slice chicken and assemble bowl.",
       "Drizzle with lemon dressing.",
     ],
+    cuisineType: "Filipino",
+    favorites: 0
   },
   {
     id: 7,
@@ -168,6 +183,8 @@ const RECIPES: RecipeType[] = [
       "Add vegetables and toss.",
       "Top with parmesan cheese.",
     ],
+    cuisineType: "Filipino",
+    favorites: 67
   },
   {
     id: 8,
@@ -191,6 +208,8 @@ const RECIPES: RecipeType[] = [
       "Stir in spinach and parmesan.",
       "Return chicken and cook until done.",
     ],
+    cuisineType: "Filipino",
+    favorites: 3
   },
 ];
 
