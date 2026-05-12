@@ -29,6 +29,7 @@ export default function FilterPage() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [cuisineSearch, setCuisineSearch] = useState('');
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [cuisineDropdownOpen, setCuisineDropdownOpen] = useState(false)
 
   const { isDark } = useTheme();
 
