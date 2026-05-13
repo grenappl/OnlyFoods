@@ -116,16 +116,19 @@ function RecipeCard({
       <View className="px-4 py-3.5">
         {/* Cuisine Type - Below image */}
         <View className="mb-2 flex-row items-center gap-1.5">
-          <Utensils size={12} color="#1a1919" />
-          <Text className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400">
+          <Utensils size={12} color={isDark ? '#E5E7EB' : '#1F2A38'} />
+          <Text
+            className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400"
+            style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
             {recipe.cuisineType} Cuisine
           </Text>
         </View>
 
         {/* Recipe Name */}
         <Text
-          className="mb-2 text-lg font-bold text-text-800 dark:text-text-dark-800"
-          numberOfLines={1}>
+          className="mb-2 text-lg font-bold"
+          numberOfLines={1}
+          style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
           {recipe.name}
         </Text>
 
@@ -133,8 +136,10 @@ function RecipeCard({
         <View className="flex-row items-center gap-4">
           {recipe.cookTime && (
             <View className="flex-row items-center gap-1.5">
-              <Clock size={14} color="#1a1919" />
-              <Text className="text-sm font-medium text-text-600 dark:text-text-dark-400">
+              <Clock size={14} color={isDark ? '#E5E7EB' : '#1F2A38'} />
+              <Text
+                className="text-sm font-medium text-text-600 dark:text-text-dark-400"
+                style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
                 {recipe.cookTime}
               </Text>
             </View>
@@ -142,8 +147,10 @@ function RecipeCard({
 
           {recipe.servings && (
             <View className="flex-row items-center gap-1.5">
-              <Users size={14} color="#1a1919" />
-              <Text className="text-sm font-medium text-text-600 dark:text-text-dark-400">
+              <Users size={14} color={isDark ? '#E5E7EB' : '#1F2A38'} />
+              <Text
+                className="text-sm font-medium text-text-600 dark:text-text-dark-400"
+                style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
                 {recipe.servings}{' '}
                 {typeof recipe.servings === 'number' && recipe.servings > 1
                   ? 'servings'
@@ -178,7 +185,7 @@ export default function MyRecipesPage() {
       <View className="bg-gradient-to-b from-accent-500/10 via-transparent to-transparent px-4 pb-6 pt-6">
         <View className="flex-row items-center justify-between">
           <View>
-            <Text className="text-3xl font-bold text-text-800 dark:text-text-dark-800">
+            <Text className="text-2xl font-bold text-text-700 dark:text-text-dark-800">
               My Recipes
             </Text>
             <Text className="mt-1 text-sm text-text-500 dark:text-text-dark-500">
@@ -217,9 +224,11 @@ export default function MyRecipesPage() {
       ) : (
         <View className="-mt-20 flex-1 items-center justify-center px-8">
           <View className="items-center">
-            {/* Green Circle with Magnifying Glass */}
-            <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-green-300 shadow-lg shadow-green-500/30">
-              <Plus size={35} color="green" />
+            {/* Green Circle with Plus */}
+            <View
+              className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-green-300 shadow-lg shadow-green-500/30"
+              style={{ backgroundColor: isDark ? '#0b7a29' : '#1F2A38' }}>
+              <Plus size={35} color={isDark ? '#23da3e' : '#1F2A38'} />
             </View>
 
             <Text className="text-1xl mb-2 font-bold text-text-800 dark:text-text-dark-800">
