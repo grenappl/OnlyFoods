@@ -7,6 +7,7 @@ export interface AuthState {
     id: string;
     name: string;
     email: string;
+    pfp: string;
   };
   accessToken?: string;
 }

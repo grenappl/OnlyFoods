@@ -2,26 +2,35 @@ import useAuth from "@/hooks/useAuth";
 import useTheme from "@/hooks/useTheme";
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Plus } from "lucide-react-native";
 
 export function EditProfileContent(){
   const { isDark } = useTheme();
   const { auth } = useAuth();
   const [ pfp, setPfp ] = useState(auth?.user?.pfp);
+  const { setAuth } = useAuth();
 
   const [ username, setUsername ] = useState(auth?.user?.name);
   const [ email, setEmail ] = useState(auth?.user?.email);
 
   const [ nameError, setNameError ] = useState<string>('');
   const [ emailError, setEmailError ] = useState<string>('');
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const handleEdit = async () => {
     if(!username) return setNameError('Username cannot be empty!'); 
     if(!email) return setEmailError('Email cannot be empty!'); 
     if(!email.includes('@')) return setEmailError('Invalid email!');
 
-    // api stuff here
+    try {
+      // api route here
+      setAuth(prev => ({
+        ...prev,
+      }))
+    } catch (e: any) {
+      return Alert.alert('Error', e?.message)
+    }
   }
 
   const handleAttachImage = async () => {

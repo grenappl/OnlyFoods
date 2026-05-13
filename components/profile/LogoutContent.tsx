@@ -1,11 +1,14 @@
 import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 export function LogOutContent(){
   const { logout } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
+      setIsLoading(true);
       await logout();
       router.replace('/Login');
   };
@@ -21,8 +24,11 @@ export function LogOutContent(){
           className="bg-secondary-500 dark:bg-secondary-600 py-4 px-6 rounded-xl items-center mt-3"
           onPress={handleLogout}
           activeOpacity={0.8}
+          disabled={isLoading}
         >
-          <Text className="text-lg font-semibold text-text-50 dark:text-text-dark-50">Confirm</Text>
+          {isLoading ?
+            <ActivityIndicator color="white" size={24} /> :
+            <Text className="text-lg font-semibold text-text-50 dark:text-text-dark-50">Confirm</Text>}
         </TouchableOpacity> 
       </View>
     </View>

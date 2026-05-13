@@ -13,6 +13,7 @@ export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
+  // const [recipes, setRecipes] = useState<RecipeType[]>([])
 
   const cardRef = useRef<RecipeCardRef>(null);
   const { addFavorite } = useFavorites()
@@ -32,10 +33,33 @@ export default function DiscoverPage() {
   };
 
   useEffect(() => {
-    async function me(){
-      console.log(await privateApi.get('/profiles/me'))
+    async function fetchRecipes(){
+      try {
+        console.log(await privateApi.get('/profiles/me'))
+        // const res = await privateApi.get('/recipes')
+        // const recipeData = [...res.data];
+        // recipeData.forEach((r, index) => {
+        //   recipeData[index] = {
+        //     id: r.id,
+        //     title: r.title,
+        //     description: r.description,
+        //     ingredients: r.ingredients,
+        //     instructions: r.steps,
+        //     cuisineType: r.cuisine_type,
+        //     cookTime: r.cook_time_minutes,
+        //     servings: r.servings,
+        //     // "isPublic": r.is_publised,
+        //     favorites: r.favorites_count,
+        //     // authorId: r.author_id,
+        //     // createdAt: r.created_at"
+        //   }
+        // })
+        // setRecipes(recipeData)
+      } catch (e) {
+        console.log(e)
+      }
     }
-    me()
+    fetchRecipes()
   }, [])
 
   return (
