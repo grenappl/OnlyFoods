@@ -2,7 +2,7 @@ export interface RecipeType {
   id: number;
   name: string;
   image: string;
-  cookTime: string;
+  cookTime: number; // Changed from string to number
   servings: number;
   description: string;
   ingredients: string[];
@@ -18,7 +18,7 @@ const RECIPES: RecipeType[] = [
     name: 'Creamy Garlic Pasta',
     image:
       'https://images.unsplash.com/photo-1693820206774-d4a769355142?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '20 min',
+    cookTime: 20,
     servings: 4,
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
@@ -37,15 +37,15 @@ const RECIPES: RecipeType[] = [
       'Stir in parmesan cheese.',
       'Combine with pasta and season to taste.',
     ],
-    cuisineType: "Filipino",
-    favorites: 31251
+    cuisineType: 'Filipino',
+    favorites: 31251,
   },
   {
     id: 2,
     name: 'Spicy Tomato Penne',
     image:
       'https://images.unsplash.com/photo-1693820206848-6ad84857832a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '25 min',
+    cookTime: 25,
     servings: 3,
     description:
       'Bold and zesty penne pasta tossed in a spicy tomato sauce with crushed red pepper and fresh basil.',
@@ -64,15 +64,15 @@ const RECIPES: RecipeType[] = [
       'Simmer for 10 minutes.',
       'Mix pasta with sauce and garnish with basil.',
     ],
-    cuisineType: "Filipino",
-    favorites: 6
+    cuisineType: 'Filipino',
+    favorites: 6,
   },
   {
     id: 3,
     name: 'Chocolate Layer Cake',
     image:
       'https://images.unsplash.com/photo-1585601356536-270d51fe07a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '90 min',
+    cookTime: 90,
     servings: 12,
     description:
       'Decadent chocolate cake with layers of rich frosting and chocolate shavings. A showstopper for any celebration.',
@@ -91,15 +91,15 @@ const RECIPES: RecipeType[] = [
       'Pour into pans and bake for 30-35 minutes.',
       'Cool and frost between layers.',
     ],
-    cuisineType: "Filipino",
-    favorites: 2
+    cuisineType: 'Filipino',
+    favorites: 2,
   },
   {
     id: 4,
     name: 'Crispy Nachos Supreme',
     image:
       'https://images.unsplash.com/photo-1776178393300-48bc87f3b65b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '15 min',
+    cookTime: 15,
     servings: 6,
     description:
       'Loaded nachos with melted cheese, jalapeños, corn, and your favorite toppings. Perfect for game day!',
@@ -118,15 +118,15 @@ const RECIPES: RecipeType[] = [
       'Bake until cheese melts.',
       'Serve with sour cream and salsa.',
     ],
-    cuisineType: "Filipino",
-    favorites: 23
+    cuisineType: 'Filipino',
+    favorites: 23,
   },
   {
     id: 5,
     name: 'Mini Berry Tarts',
     image:
       'https://images.unsplash.com/photo-1764813823855-3ef4ad5f863d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '45 min',
+    cookTime: 45,
     servings: 8,
     description:
       'Delicate tart shells filled with vanilla cream and topped with fresh berries and a berry glaze.',
@@ -144,15 +144,15 @@ const RECIPES: RecipeType[] = [
       'Top with fresh berries.',
       'Brush with glaze before serving.',
     ],
-    cuisineType: "Filipino",
-    favorites: 8
+    cuisineType: 'Filipino',
+    favorites: 8,
   },
   {
     id: 6,
     name: 'Grilled Chicken Bowl',
     image:
       'https://images.unsplash.com/photo-1748012199673-d990c72aaa57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '30 min',
+    cookTime: 30,
     servings: 2,
     description:
       'Healthy grilled chicken served with roasted vegetables, quinoa, and a tangy lemon herb dressing.',
@@ -171,15 +171,15 @@ const RECIPES: RecipeType[] = [
       'Slice chicken and assemble bowl.',
       'Drizzle with lemon dressing.',
     ],
-    cuisineType: "Filipino",
-    favorites: 0
+    cuisineType: 'Filipino',
+    favorites: 0,
   },
   {
     id: 7,
     name: 'Pesto Pasta Primavera',
     image:
       'https://images.unsplash.com/photo-1748012199657-3f34292cdf70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '25 min',
+    cookTime: 25,
     servings: 4,
     description:
       'Fresh pasta tossed with homemade pesto, seasonal vegetables, and parmesan cheese.',
@@ -191,15 +191,15 @@ const RECIPES: RecipeType[] = [
       'Add vegetables and toss.',
       'Top with parmesan cheese.',
     ],
-    cuisineType: "Filipino",
-    favorites: 67
+    cuisineType: 'Filipino',
+    favorites: 67,
   },
   {
     id: 8,
     name: 'Creamy Tuscan Chicken',
     image:
       'https://images.unsplash.com/photo-1748012199672-2a94ab9cbb19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
-    cookTime: '35 min',
+    cookTime: 35,
     servings: 4,
     description:
       'Tender chicken in a creamy sun-dried tomato sauce with spinach and garlic. Served with crusty bread.',
@@ -218,10 +218,9 @@ const RECIPES: RecipeType[] = [
       'Stir in spinach and parmesan.',
       'Return chicken and cook until done.',
     ],
-    cuisineType: "Filipino",
-    favorites: 3
+    cuisineType: 'Filipino',
+    favorites: 3,
   },
 ];
 
-
-export default RECIPES
+export default RECIPES;
