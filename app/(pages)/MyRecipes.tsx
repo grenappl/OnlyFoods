@@ -16,6 +16,7 @@ import useRecipes from '@/hooks/useRecipes';
 import { RecipeType } from '@/utils/Recipes';
 import { useState } from 'react';
 import RecipeDetail from '@/components/RecipeDetails';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_MARGIN = 16;
@@ -34,7 +35,7 @@ const CUISINE_TYPES = [
   'Korean',
   'Mexican',
   'Spanish',
-  'Thai'
+  'Thai',
 ];
 
 function RecipeCard({
@@ -52,17 +53,7 @@ function RecipeCard({
 }) {
   const favorites = recipe.favorites || Math.floor(Math.random() * 100) + 1; // Example favorites count
 
-  const handleDelete = () => {
-    Alert.alert('Delete Recipe', `Are you sure you want to delete "${recipe.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        onPress: onDelete,
-        style: 'destructive',
-      },
-    ]);
-  };
-
+  console.log(recipe.cuisineType);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -103,7 +94,7 @@ function RecipeCard({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={handleDelete}
+            onPress={onDelete}
             className="rounded-full bg-black/60 p-2 backdrop-blur-sm">
             <Trash2 size={16} color="#FF6B6B" />
           </TouchableOpacity>
@@ -138,7 +129,7 @@ function RecipeCard({
               <Text
                 className="text-sm font-medium text-text-600 dark:text-text-dark-400"
                 style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-                {recipe.cookTime}
+                {recipe.cookTime} mins
               </Text>
             </View>
           )}
@@ -166,15 +157,17 @@ export default function MyRecipesPage() {
   const { isDark } = useTheme();
   const { recipes, removeRecipe } = useRecipes();
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [recipeToDelete, setRecipeToDelete] = useState<RecipeType | null>(null); // 1. Add this
 
   const handleCreate = () => router.push('/RecipeEditor');
 
-  const handleDeleteRecipe = (recipeId: number) => {
-    if (removeRecipe) {
-      removeRecipe(recipeId);
-    } else {
-      console.log('Delete recipe:', recipeId);
+  const handleDelete = () => {
+    if (recipeToDelete) {
+      removeRecipe(recipeToDelete.id);
+      setRecipeToDelete(null);
     }
+    setModalVisible(false);
   };
 
   return (
@@ -215,7 +208,10 @@ export default function MyRecipesPage() {
               isDark={isDark}
               onPress={() => setSelectedRecipe(item)}
               onEdit={() => router.push({ pathname: '/RecipeEditor', params: { id: item.id } })}
-              onDelete={() => handleDeleteRecipe(item.id)}
+              onDelete={() => {
+                setRecipeToDelete(item);
+                setModalVisible(true);
+              }}
             />
           )}
         />
@@ -245,6 +241,17 @@ export default function MyRecipesPage() {
           </View>
         </View>
       )}
+
+      <ConfirmModal
+        visible={modalVisible}
+        title="Delete Item?"
+        message="This action cannot be undone. Are you sure you want to delete this item?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        onCancel={() => setModalVisible(false)}
+        danger={true}
+      />
 
       <RecipeDetail recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
     </View>
