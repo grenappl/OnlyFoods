@@ -74,7 +74,7 @@ function RecipeCard({
         marginBottom: 20,
         alignSelf: 'center',
       }}
-      className="overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-background-dark-200">
+      className="mb-3 overflow-hidden rounded-2xl bg-background-50 dark:bg-background-dark-50">
       {/* Image — Rectangular shape */}
       <View style={{ height: 220, position: 'relative' }}>
         {recipe.image ? (
@@ -182,7 +182,7 @@ export default function MyRecipesPage() {
   return (
     <View className="flex-1 bg-background-200 dark:bg-background-dark-100">
       {/* Header with gradient background */}
-      <View className="bg-gradient-to-b from-accent-500/10 via-transparent to-transparent px-4 pb-6 pt-6">
+      <View className="mb-3 overflow-hidden rounded-2xl bg-background-50 dark:bg-background-dark-50">
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-2xl font-bold text-text-700 dark:text-text-dark-800">
