@@ -111,7 +111,7 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
                 <View className="flex-row items-center gap-4">
                   <View className="flex-row items-center gap-2">
                     <Clock color='white' size={16}/>
-                    <Text className="text-white text-sm">{recipe.cookTime}</Text>
+                    <Text className="text-white text-sm">{recipe.cookTime} min</Text>
                   </View>
                   <View className="flex-row items-center gap-2">
                     <Users color='white' size={16}/>

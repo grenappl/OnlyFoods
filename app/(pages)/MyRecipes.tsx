@@ -34,9 +34,7 @@ const CUISINE_TYPES = [
   'Korean',
   'Mexican',
   'Spanish',
-  'Thai',
-  'Lebanese',
-  'Other',
+  'Thai'
 ];
 
 function RecipeCard({

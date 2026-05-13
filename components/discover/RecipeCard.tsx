@@ -131,7 +131,7 @@ const RecipeCard = forwardRef<RecipeCardRef, RecipeCardProps>(({ recipe, onSwipe
               <View className="flex-row items-center gap-4">
                 <View className="flex-row items-center gap-2">
                   <Clock size={12} color="white" />
-                  <Text className="text-xs text-white">{recipe.cookTime}</Text>
+                  <Text className="text-xs text-white">{recipe.cookTime} min</Text>
                 </View>
                 <View className="flex-row items-center gap-1">
                   <Users size={12} color="white" />

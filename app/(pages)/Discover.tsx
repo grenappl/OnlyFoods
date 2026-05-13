@@ -3,23 +3,25 @@ import { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import RecipeCard, { RecipeCardRef } from '@/components/discover/RecipeCard';
 import { Heart, X } from 'lucide-react-native';
-import recipes from '@/utils/Recipes';
+import RECIPES from '@/utils/Recipes';
 import RecipeDetails from '@/components/RecipeDetails';
 import { RecipeType } from '@/utils/Recipes';
 import useFavorites from '@/hooks/useFavorites';
 import { privateApi } from '@/utils/api';
+import useRecipes from '@/hooks/useRecipes';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
-  // const [recipes, setRecipes] = useState<RecipeType[]>([])
+  const [feedRecipes, setFeedRecipes] = useState<RecipeType[]>([]);
+  const { recipes } = useRecipes()
 
   const cardRef = useRef<RecipeCardRef>(null);
-  const { addFavorite } = useFavorites()
+  const { favorites, addFavorite } = useFavorites()
 
   const handleSwipe = (direction: 'left' | 'right') => {
-    if(direction === 'right') addFavorite(recipes[currentIndex].id)
+    if(direction === 'right') addFavorite(feedRecipes[currentIndex].id)
     setCurrentIndex((prev) => prev + 1)
     setTimeout(() => {
       setIsAnimating(false);
@@ -31,6 +33,13 @@ export default function DiscoverPage() {
     setIsAnimating(true);
     cardRef.current?.triggerSwipe(direction);
   };
+
+  // temp
+  const handleReset = () => {
+    const filteredRecipes = RECIPES.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
+    setFeedRecipes(filteredRecipes)
+    setCurrentIndex(0)
+  }
 
   useEffect(() => {
     async function fetchRecipes(){
@@ -54,7 +63,8 @@ export default function DiscoverPage() {
         //     // createdAt: r.created_at"
         //   }
         // })
-        // setRecipes(recipeData)
+        const filteredRecipes = RECIPES.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
+        setFeedRecipes(filteredRecipes)
       } catch (e) {
         console.log(e)
       }
@@ -64,14 +74,14 @@ export default function DiscoverPage() {
 
   return (
     <View className="flex-1 bg-background-200 dark:bg-background-dark-100 items-center justify-center px-4 overflow-hidden">
-      {currentIndex < recipes.length ? (
+      {currentIndex < feedRecipes.length ? (
         <View className="w-full" style={{ aspectRatio: 3 / 4.5 }}>
           <RecipeCard
-            key={recipes[currentIndex].id}
+            key={feedRecipes[currentIndex].id}
             ref={cardRef}
-            recipe={recipes[currentIndex]}
+            recipe={feedRecipes[currentIndex]}
             onSwipe={handleSwipe}
-            onPress={() => setSelectedRecipe(recipes[currentIndex])}
+            onPress={() => setSelectedRecipe(feedRecipes[currentIndex])}
             setIsAnimating={setIsAnimating}
           />
         </View>
@@ -79,14 +89,14 @@ export default function DiscoverPage() {
         <View className="items-center px-6">
           <Text className="text-2xl mb-2 text-text">Placeholder Reset</Text>
           <TouchableOpacity
-            onPress={() => setCurrentIndex(0)}
+            onPress={handleReset}
             className="px-8 py-3 bg-[#2ECC71] rounded-full shadow-lg"
           >
             <Text className="text-white text-base">Start Over</Text>
           </TouchableOpacity>
         </View>
       )}
-      {currentIndex < recipes.length && (
+      {currentIndex < feedRecipes.length && (
         <View className="flex-row items-center justify-center gap-10 my-4">
           <TouchableOpacity
             onPress={() => handleButtonPress('left')}
