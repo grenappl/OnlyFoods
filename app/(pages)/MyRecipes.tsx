@@ -63,7 +63,7 @@ function RecipeCard({
         marginBottom: 20,
         alignSelf: 'center',
       }}
-      className="mb-3 overflow-hidden rounded-2xl bg-background-50 dark:bg-background-dark-50">
+      className="mb-3 overflow-hidden rounded-2xl bg-background-50 dark:bg-background-dark-50 shadow-2xl">
       {/* Image — Rectangular shape */}
       <View style={{ height: 220, position: 'relative' }}>
         {recipe.image ? (

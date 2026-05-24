@@ -1,6 +1,9 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { privateApi } from '@/utils/api';
+import useFavorites from '@/hooks/useFavorites';
+import useRecipes from '@/hooks/useRecipes';
+import RECIPES, { RecipeType } from '@/utils/Recipes';
 
 export interface AuthState {
   user?: {
@@ -29,6 +32,8 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [auth, setAuth] = useState<AuthState>({});
   const [isLoading, setIsLoading] = useState(true);
+  // const { setRecipes } = useRecipes();
+  // const { setFavorites } = useFavorites();
 
   // Rehydrate auth from secure storage on app start
   useEffect(() => {
@@ -68,8 +73,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = async () => {
     try {
-      await privateApi.post('/auth/logout');
+      // await privateApi.post('/auth/logout');
       setAuth({});
+      // setFavorites([]);
+      // setRecipes([ RECIPES[0] ])
       console.log('logout!')
     } catch (e) {
       console.log(e)

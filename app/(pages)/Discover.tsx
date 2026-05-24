@@ -1,6 +1,6 @@
 import '@/global.css';
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import RecipeCard, { RecipeCardRef } from '@/components/discover/RecipeCard';
 import { Heart, X } from 'lucide-react-native';
 import RECIPES from '@/utils/Recipes';
@@ -9,6 +9,7 @@ import { RecipeType } from '@/utils/Recipes';
 import useFavorites from '@/hooks/useFavorites';
 import { privateApi } from '@/utils/api';
 import useRecipes from '@/hooks/useRecipes';
+import useTheme from '@/hooks/useTheme';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,6 +20,7 @@ export default function DiscoverPage() {
 
   const cardRef = useRef<RecipeCardRef>(null);
   const { favorites, addFavorite } = useFavorites()
+  const {isDark} = useTheme();
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if(direction === 'right') addFavorite(feedRecipes[currentIndex].id)
@@ -44,7 +46,7 @@ export default function DiscoverPage() {
   useEffect(() => {
     async function fetchRecipes(){
       try {
-        console.log(await privateApi.get('/profiles/me'))
+        // console.log(await privateApi.get('/profiles/me'))
         // const res = await privateApi.get('/recipes')
         // const recipeData = [...res.data];
         // recipeData.forEach((r, index) => {
@@ -87,13 +89,7 @@ export default function DiscoverPage() {
         </View>
       ) : (
         <View className="items-center px-6">
-          <Text className="text-2xl mb-2 text-text">Placeholder Reset</Text>
-          <TouchableOpacity
-            onPress={handleReset}
-            className="px-8 py-3 bg-[#2ECC71] rounded-full shadow-lg"
-          >
-            <Text className="text-white text-base">Start Over</Text>
-          </TouchableOpacity>
+          <ActivityIndicator size={64} color={isDark ? "white": "#374151"} />
         </View>
       )}
       {currentIndex < feedRecipes.length && (
