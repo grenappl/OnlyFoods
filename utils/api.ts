@@ -17,9 +17,13 @@ export const privateApi = axios.create({
 
 privateApi.interceptors.request.use(
   async (config) => {
+    console.log(config.url)
     const token = await SecureStore.getItemAsync('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if(config.url === '/profiles/me/avatar'){
+      config.headers["Content-Type"] = "multipart/form-data"
     }
     return config;
   },
@@ -36,7 +40,10 @@ privateApi.interceptors.response.use(
       await SecureStore.deleteItemAsync('user');
     }
 
-    const message = error.response?.data?.message ?? error.message ?? 'Something went wrong';
+    const message =
+      error.response?.data?.error ||    // ← add this, matches { "error": "..." }
+      error.response?.data?.message ||
+      error.message;
     return Promise.reject(new Error(message));
   }
 );
@@ -45,7 +52,10 @@ privateApi.interceptors.response.use(
 publicApi.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const message = error.response?.data?.message ?? error.message ?? 'Something went wrong';
+    const message =
+      error.response?.data?.error ||    // ← add this, matches { "error": "..." }
+      error.response?.data?.message ||
+      error.message;
     return Promise.reject(new Error(message));
   }
 );
