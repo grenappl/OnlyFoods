@@ -51,9 +51,20 @@ function RecipeCard({
   onDelete: () => void;
   isDark: boolean;
 }) {
-  const favorites = recipe.favorites || Math.floor(Math.random() * 100) + 1; // Example favorites count
-
-  console.log(recipe.cuisineType);
+  const favorites = recipe.favorites_count || 0; // Example favorites count
+  let imageUri: string | null = null;
+  if (typeof recipe.image === 'string' && recipe.image.trim().length > 0) {
+    // It's already a clean string URL
+    imageUri = recipe.image;
+  } else if (Array.isArray(recipe.image) && recipe.image.length > 0) {
+    // If it's a raw media array, extract the URL from the first object, or use it directly if it's an array of strings
+    const firstMedia = recipe.image[0];
+    imageUri = typeof firstMedia === 'object' ? firstMedia?.url : firstMedia;
+  } else if (recipe.image && Array.isArray(recipe.image) && recipe.image.length > 0) {
+    // Backup fallback: check if it's lurking inside the standard backend recipe_media sub-array
+    imageUri = recipe.image[0]?.url || 'null';
+  }
+  //console.log('Recipe img in MyRecipes1: ', imageUri);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -68,7 +79,7 @@ function RecipeCard({
       <View style={{ height: 220, position: 'relative' }}>
         {recipe.image ? (
           <Image
-            source={{ uri: recipe.image }}
+            source={{ uri: imageUri }}
             style={{ width: '100%', height: '100%' }}
             resizeMode="cover"
           />
@@ -109,7 +120,7 @@ function RecipeCard({
           <Text
             className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400"
             style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-            {recipe.cuisineType} Cuisine
+            {recipe.cuisine_type} Cuisine
           </Text>
         </View>
 
@@ -118,18 +129,18 @@ function RecipeCard({
           className="mb-2 text-lg font-bold"
           numberOfLines={1}
           style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-          {recipe.name}
+          {recipe.title}
         </Text>
 
         {/* Time & Servings */}
         <View className="flex-row items-center gap-4">
-          {recipe.cookTime && (
+          {recipe.cook_time_minutes && (
             <View className="flex-row items-center gap-1.5">
               <Clock size={14} color={isDark ? '#E5E7EB' : '#1F2A38'} />
               <Text
                 className="text-sm font-medium text-text-600 dark:text-text-dark-400"
                 style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-                {recipe.cookTime} mins
+                {recipe.cook_time_minutes} mins
               </Text>
             </View>
           )}
@@ -202,18 +213,21 @@ export default function MyRecipesPage() {
             paddingTop: 8,
             paddingBottom: 100,
           }}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              isDark={isDark}
-              onPress={() => setSelectedRecipe(item)}
-              onEdit={() => router.push({ pathname: '/RecipeEditor', params: { id: item.id } })}
-              onDelete={() => {
-                setRecipeToDelete(item);
-                setModalVisible(true);
-              }}
-            />
-          )}
+          renderItem={({ item }) => {
+            console.log('item: ', item);
+            return (
+              <RecipeCard
+                recipe={item}
+                isDark={isDark}
+                onPress={() => setSelectedRecipe(item)}
+                onEdit={() => router.push({ pathname: '/RecipeEditor', params: { id: item.id } })}
+                onDelete={() => {
+                  setRecipeToDelete(item);
+                  setModalVisible(true);
+                }}
+              />
+            );
+          }}
         />
       ) : (
         <View className="-mt-20 flex-1 items-center justify-center px-8">
