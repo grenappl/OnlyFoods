@@ -65,7 +65,7 @@ export default function RecipeEditorPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [cuisine, setCuisine] = useState('American');
-  const [cookTime, setCookTime] = useState(0);
+  const [cookTime, setCookTime] = useState('');
   const [servings, setServings] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   // Instructions stored as keyed items for DraggableFlatList
@@ -83,18 +83,36 @@ export default function RecipeEditorPage() {
       const recipe = getRecipeById(Number(id));
       if (recipe) {
         setImage(recipe.image ?? '');
-        setName(recipe.name);
+        setName(recipe.title || recipe.name || '');
         setDescription(recipe.description);
         setCuisine(recipe.cuisineType || 'American');
-        setCookTime(recipe.cookTime);
-        setServings(String(recipe.servings));
-        setIngredients(recipe.ingredients);
-        setInstructions(
-          recipe.instructions.map((v, i) => ({ key: `step-${i}-${Date.now()}`, value: v }))
+        setCookTime(
+          recipe.cookTime
+            ? String(recipe.cookTime)
+            : recipe.cookTime
+              ? String(recipe.cookTime)
+              : '0'
         );
+        setServings(String(recipe.servings));
+        //setIngredients(recipe.ingredients ?? ['']);
+        const rawIngredients = recipe.ingredients ?? [''];
+        setIngredients(Array.isArray(rawIngredients) ? rawIngredients : ['']);
+        const rawSteps = recipe.steps ?? recipe.instructions ?? [];
+        // setInstructions(
+        //   rawSteps.instructions.map((v, i) => ({ key: `step-${i}-${Date.now()}`, value: v }))
+        // );
+        setInstructions(
+          Array.isArray(rawSteps)
+            ? rawSteps.map((v, i) => ({ key: `step-${i}-${Date.now()}`, value: v }))
+            : [{ key: 'step-0', value: '' }]
+        );
+      } else {
+        // Guard rail: If the recipe wasn't found in state, bounce back smoothly
+        console.warn(`Recipe ID ${id} not found in state context cache.`);
+        router.replace('/MyRecipes');
       }
     }
-  }, [id]);
+  }, [id, isEditing, getRecipeById]);
 
   const pickImage = async () => {
     const pickedFile = await DocumentPicker.getDocumentAsync({
