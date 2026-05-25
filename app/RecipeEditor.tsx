@@ -31,6 +31,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import useTheme from '@/hooks/useTheme';
 import useRecipes from '@/hooks/useRecipes';
 import ErrorModal from '@/components/ErrorModal';
+import { privateApi, publicApi } from '@/utils/api';
 
 const CUISINE_TYPES = [
   'American',
@@ -110,7 +111,7 @@ export default function RecipeEditorPage() {
     return false;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const instructionValues = instructions.map((i) => i.value);
     if (!image) return showError('Please add a recipe photo');
     if (name.trim().length === 0) return showError('Please enter a recipe name.');
@@ -121,20 +122,55 @@ export default function RecipeEditorPage() {
     if (!name.trim()) return;
 
     const recipe = {
-      name: name.trim(),
+      title: name.trim(),
       description: description.trim(),
-      cuisineType: cuisine,
-      cookTime,
-      servings: Number(servings),
-      image,
       ingredients: ingredients.filter((i) => i.trim()),
-      instructions: instructionValues.filter((i) => i.trim()),
+      steps: instructionValues.filter((i) => i.trim()),
+      cuisine_type: cuisine,
+      cook_time_minutes: +cookTime,
+      servings: +servings,
+      is_published: true,
+      //image,
     };
 
+    // 2. Extract the file package from your image path state
+    let imageFilePayload = null;
+    if (image && typeof image === 'string' && image.startsWith('file://')) {
+      // Extracts the filename from the end of the path (e.g., "image_b918e2.png")
+      const filename = image.split('/').pop() || 'recipe_image.jpg';
+
+      // Infers the mime-type extension cleanly
+      const match = /\.(\w+)$/.exec(filename);
+      const ext = match?.[1]?.toLowerCase();
+
+      // Normalize extensions to valid MIME types
+      const mimeMap: Record<string, string> = {
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        png: 'image/png',
+        webp: 'image/webp',
+        heic: 'image/heic',
+        gif: 'image/gif',
+      };
+      const type = mimeMap[ext ?? ''] ?? 'image/jpeg';
+      // This creates the standard internal file tracking object
+      imageFilePayload = {
+        uri: image,
+        name: filename,
+        type: type,
+      };
+    }
     if (isEditing) {
-      updateRecipe(Number(id), recipe);
+      await updateRecipe(Number(id), recipe);
     } else {
-      addRecipe(recipe);
+      console.log('imageFilePayload: ', imageFilePayload);
+      await addRecipe(recipe, imageFilePayload);
+      // try {
+      //   //console.log(recipe);
+      //   await privateApi.post('/recipes/create', recipe);
+      // } catch (e: any) {
+      //   console.log(e);
+      // }
     }
     router.replace('/MyRecipes');
   };
@@ -262,7 +298,7 @@ export default function RecipeEditorPage() {
                 onPress={pickImage}
                 className="w-full overflow-hidden rounded-2xl border-2 border-dashed border-text-200 dark:border-background-dark-400"
                 style={{ height: 180 }}>
-                {image ? (
+                {typeof image === 'string' && image.length > 0 ? (
                   <Image source={{ uri: image }} className="h-full w-full" resizeMode="cover" />
                 ) : (
                   <View className="flex-1 items-center justify-center gap-2 bg-background-100 dark:bg-background-dark-50">
