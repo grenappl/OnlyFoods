@@ -114,12 +114,12 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
               className="absolute bottom-0 left-0 right-0 h-[60%]"
             />
             <View className="absolute bottom-0 left-0 right-0 p-5">
-              <Text className="mb-2 text-3xl font-bold text-white">{recipe.title}</Text>
+              <Text className="mb-2 text-1xl font-bold text-white">{recipe.name}</Text>
               <View className="flex-row justify-between">
                 <View className="flex-row items-center gap-4">
                   <View className="flex-row items-center gap-2">
                     <Clock color="white" size={16} />
-                    <Text className="text-sm text-white">{recipe.cook_time_minutes} min</Text>
+                    <Text className="text-sm text-white">{recipe.cookTime} min</Text>
                   </View>
                   <View className="flex-row items-center gap-2">
                     <Users color="white" size={16} />
@@ -127,15 +127,15 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
                   </View>
                   <View className="flex-row items-center gap-2">
                     <Utensils color="white" size={16} />
-                    <Text className="text-sm text-white">{recipe.cuisine_type} Cuisine</Text>
+                    <Text className="text-sm text-white">{recipe.cuisineType}</Text>
                   </View>
                 </View>
                 <View className="flex-row items-center gap-2">
                   <Heart size={20} color="white" fill="white" />
                   <Text className="text-md text-white">
-                    {recipe.favorites_count < 10000
-                      ? recipe.favorites_count
-                      : (recipe.favorites_count / 1000).toFixed(1) + 'k'}
+                    {recipe.favorites < 10000
+                      ? recipe.favorites
+                      : (recipe.favorites / 1000).toFixed(1) + 'k'}
                   </Text>
                 </View>
               </View>
@@ -178,7 +178,7 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
               </Text>
             </View>
             <View className="justify-between rounded-2xl bg-background-200 p-4 dark:bg-background-dark-100">
-              {recipe.steps.map((instruction, index) => (
+              {recipe.instructions.map((instruction, index) => (
                 <View className="mb-6" key={`${recipe.name}_${index}_${instruction}`}>
                   <View className="mb-2 size-8 items-center justify-center rounded-full bg-primary-500">
                     <Text className="text-xs text-text-800">{Number(index + 1)}</Text>

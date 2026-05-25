@@ -8,8 +8,8 @@ export interface RecipeType {
   ingredients: string[];
   instructions: string[];
   cuisineType: string;
-  is_published: boolean;
-  favorites_count: number;
+  // isPublic: boolean;
+  favorites: number;
 }
 
 const RECIPES: RecipeType[] = [

@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from 'react';
 import RECIPES, { RecipeType } from '@/utils/Recipes';
 import { privateApi } from '@/utils/api';
 import useAuth from '@/hooks/useAuth';
+import formatRecipe from '@/utils/formatRecipe';
 
 // Omit id since it's auto-generated on add
 type NewRecipe = Omit<RecipeType, 'id'>;
@@ -45,11 +46,8 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         res.data.map(async (recipe: RecipeType) => {
           try {
             const detailRes = await privateApi.get(`/recipes/${recipe.id}`);
-            //console.log('detail res: ', detailRes.data);
-            return {
-              ...recipe,
-              image: detailRes.data.recipe_media ?? null,
-            };
+            // console.log('detail res: ', detailRes.data);
+            return formatRecipe(detailRes.data);
           } catch {
             // If image fetch fails, return recipe without image
             return { ...recipe, image: null };
@@ -59,7 +57,7 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setRecipes(recipesWithImages);
       //console.log('Recipes with images: ', recipes);
     } catch (e: any) {
-      console.error(e);
+      console.log(e);
     }
   };
   useEffect(() => {
@@ -67,10 +65,10 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [auth?.accessToken]);
 
   // Persist whenever recipes change
-  useEffect(() => {
-    // replace with actual API/storage call
-    privateApi.get('/recipes/my');
-  }, [recipes]);
+  // useEffect(() => {
+  //   // replace with actual API/storage call
+  //   privateApi.get('/recipes/my');
+  // }, [recipes]);
 
   const addRecipe = async (
     recipe: NewRecipe,

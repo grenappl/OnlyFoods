@@ -24,6 +24,7 @@ export function ChangePasswordContent(){
     if(!confPass) return setConfPassError('Password cannot be empty!'); 
 
     // api stuff here
+    // await privateApi.post('/reset-password/confirm')
   }
 
   return (

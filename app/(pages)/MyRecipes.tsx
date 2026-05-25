@@ -51,7 +51,7 @@ function RecipeCard({
   onDelete: () => void;
   isDark: boolean;
 }) {
-  const favorites = recipe.favorites_count || 0; // Example favorites count
+  const favorites = recipe.favorites || 0; // Example favorites count
   let imageUri: string | null = null;
   if (typeof recipe.image === 'string' && recipe.image.trim().length > 0) {
     // It's already a clean string URL
@@ -120,7 +120,7 @@ function RecipeCard({
           <Text
             className="text-xs font-medium uppercase tracking-wide text-text-500 dark:text-text-dark-400"
             style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-            {recipe.cuisine_type} Cuisine
+            {recipe.cuisineType} Cuisine
           </Text>
         </View>
 
@@ -129,18 +129,18 @@ function RecipeCard({
           className="mb-2 text-lg font-bold"
           numberOfLines={1}
           style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-          {recipe.title}
+          {recipe.name}
         </Text>
 
         {/* Time & Servings */}
         <View className="flex-row items-center gap-4">
-          {recipe.cook_time_minutes && (
+          {recipe.cookTime && (
             <View className="flex-row items-center gap-1.5">
               <Clock size={14} color={isDark ? '#E5E7EB' : '#1F2A38'} />
               <Text
                 className="text-sm font-medium text-text-600 dark:text-text-dark-400"
                 style={{ color: isDark ? '#E5E7EB' : '#1F2A38' }}>
-                {recipe.cook_time_minutes} mins
+                {recipe.cookTime} min
               </Text>
             </View>
           )}
