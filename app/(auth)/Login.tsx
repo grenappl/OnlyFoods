@@ -44,6 +44,7 @@ export default function Login() {
         password: password,
       });
       const resUser = await privateApi.get('/profiles/me');
+      console.log(resToken)
       setAuth({
         user: resUser.data,
         accessToken: resToken.access_token,
@@ -58,7 +59,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    async function eee(){
+    async function log(){
       try {
         await privateApi.post('/auth/logout');
         setAuth({});
@@ -67,7 +68,7 @@ export default function Login() {
         console.log(e)
       }
     }
-    eee()
+    log()
   }, [])
 
   return (

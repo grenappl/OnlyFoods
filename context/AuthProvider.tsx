@@ -42,6 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const token = await SecureStore.getItemAsync('accessToken');
         const userRaw = await SecureStore.getItemAsync('user');
         if (token && userRaw) {
+          console.log(await privateApi.get('profiles/me'))
           setAuth({ accessToken: token, user: JSON.parse(userRaw) });
         }
       } catch (e) {
@@ -73,7 +74,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = async () => {
     try {
-      // await privateApi.post('/auth/logout');
+      await privateApi.post('/auth/logout');
       setAuth({});
       // setFavorites([]);
       // setRecipes([ RECIPES[0] ])

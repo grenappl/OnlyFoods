@@ -2,7 +2,7 @@ import '@/global.css';
 import { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import RecipeCard, { RecipeCardRef } from '@/components/discover/RecipeCard';
-import { Heart, X } from 'lucide-react-native';
+import { Heart, RefreshCw, WifiOff, X } from 'lucide-react-native';
 import RECIPES from '@/utils/Recipes';
 import RecipeDetails from '@/components/RecipeDetails';
 import { RecipeType } from '@/utils/Recipes';
@@ -10,6 +10,7 @@ import useFavorites from '@/hooks/useFavorites';
 import { privateApi } from '@/utils/api';
 import useRecipes from '@/hooks/useRecipes';
 import useTheme from '@/hooks/useTheme';
+import formatRecipe from '@/utils/formatRecipe';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,8 +20,9 @@ export default function DiscoverPage() {
   const { recipes } = useRecipes()
 
   const cardRef = useRef<RecipeCardRef>(null);
-  const { favorites, addFavorite } = useFavorites()
+  const { favorites, addFavorite, setFavorites } = useFavorites()
   const {isDark} = useTheme();
+  const [networkError, setNetworkError] = useState(false);
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if(direction === 'right') addFavorite(feedRecipes[currentIndex].id)
@@ -37,41 +39,59 @@ export default function DiscoverPage() {
   };
 
   // temp
-  const handleReset = () => {
+  const handleRefresh = () => {
     const filteredRecipes = RECIPES.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
     setFeedRecipes(filteredRecipes)
     setCurrentIndex(0)
   }
 
-  useEffect(() => {
-    async function fetchRecipes(){
-      try {
-        // console.log(await privateApi.get('/profiles/me'))
-        // const res = await privateApi.get('/recipes')
-        // const recipeData = [...res.data];
-        // recipeData.forEach((r, index) => {
-        //   recipeData[index] = {
-        //     id: r.id,
-        //     title: r.title,
-        //     description: r.description,
-        //     ingredients: r.ingredients,
-        //     instructions: r.steps,
-        //     cuisineType: r.cuisine_type,
-        //     cookTime: r.cook_time_minutes,
-        //     servings: r.servings,
-        //     // "isPublic": r.is_publised,
-        //     favorites: r.favorites_count,
-        //     // authorId: r.author_id,
-        //     // createdAt: r.created_at"
-        //   }
-        // })
-        const filteredRecipes = RECIPES.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
-        setFeedRecipes(filteredRecipes)
-      } catch (e) {
-        console.log(e)
-      }
+  const fetchRecipes = async () => {
+    try {
+      setNetworkError(false)
+      const res = await privateApi.get('/recipes')
+      const recipeData = [...res.data];
+      recipeData.forEach((r, index) => {
+        recipeData[index] = formatRecipe(r);
+      })
+      const filteredRecipes = recipeData.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
+      setFeedRecipes(filteredRecipes)
+    } catch (e) {
+      setNetworkError(true)
+      console.log(e)
     }
-    fetchRecipes()
+  }
+  const loadFavorites = async () => {
+    try {
+      const res = await privateApi.get('/favorites/me/saved')
+      console.log(res.data[0])
+      const fav = [...res.data]
+      fav.forEach((f: {recipes: RecipeType}, index) => {
+        const r = {...f.recipes};
+        fav[index] = {
+          id: r.id,
+          name: r.title,
+          description: r.description,
+          ingredients: r.ingredients,
+          instructions: r.steps,
+          cuisineType: r.cuisine_type,
+          cookTime: r.cook_time_minutes,
+          servings: r.servings,
+          // "isPublic": r.is_published,
+          favorites: r.favorites_count,
+          // authorId: r.author_id,
+          // createdAt: r.created_at"
+        }
+      });
+      console.log(fav)
+      setFavorites(fav);
+    } catch (e) {
+      console.log('FAV: ' + e)
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+    loadFavorites();
   }, [])
 
   return (
@@ -88,6 +108,26 @@ export default function DiscoverPage() {
           />
         </View>
       ) : (
+        networkError ?
+        <View className="items-center px-6 gap-4">
+          <View className="size-20 rounded-full bg-secondary-100 dark:bg-secondary-900 items-center justify-center">
+            <WifiOff size={36} color="#FB4141" />
+          </View>
+          <Text className="text-xl font-bold text-text-800 dark:text-text-dark-800">
+            No Connection
+          </Text>
+          <Text className="text-sm text-text-400 dark:text-text-dark-500 text-center">
+            Check your internet connection and try again.
+          </Text>
+          <TouchableOpacity
+            onPress={fetchRecipes}
+            className="flex-row items-center gap-2 bg-accent-500 px-6 py-3 rounded-full mt-2"
+          >
+            <RefreshCw size={16} color="white" />
+            <Text className="text-white font-semibold text-sm">Try Again</Text>
+          </TouchableOpacity>
+        </View>
+        :
         <View className="items-center px-6">
           <ActivityIndicator size={64} color={isDark ? "white": "#374151"} />
         </View>
