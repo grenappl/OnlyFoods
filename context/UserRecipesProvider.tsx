@@ -137,8 +137,16 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const updateRecipe = (id: number, updated: Partial<RecipeType>) => {
-    setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
+  const updateRecipe = async (id: number, updated: Partial<RecipeType>) => {
+    try {
+      const res = await privateApi.put(`/recipes/update/${id}`, updated);
+      console.log('Server update response:', res.data);
+
+      await loadUserRecipes();
+    } catch (e) {
+      console.error(`Failed to update recipe ID ${id}:`, e);
+    }
+    //setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
   };
 
   const removeRecipe = (id: number) => {

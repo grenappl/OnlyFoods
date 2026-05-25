@@ -65,7 +65,7 @@ export default function RecipeEditorPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [cuisine, setCuisine] = useState('American');
-  const [cookTime, setCookTime] = useState(0);
+  const [cookTime, setCookTime] = useState('');
   const [servings, setServings] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   // Instructions stored as keyed items for DraggableFlatList
@@ -86,7 +86,13 @@ export default function RecipeEditorPage() {
         setName(recipe.title || recipe.name || '');
         setDescription(recipe.description);
         setCuisine(recipe.cuisineType || 'American');
-        setCookTime(recipe.cookTime);
+        setCookTime(
+          recipe.cookTime
+            ? String(recipe.cookTime)
+            : recipe.cookTime
+              ? String(recipe.cookTime)
+              : '0'
+        );
         setServings(String(recipe.servings));
         //setIngredients(recipe.ingredients ?? ['']);
         const rawIngredients = recipe.ingredients ?? [''];
