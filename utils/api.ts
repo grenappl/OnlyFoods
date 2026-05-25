@@ -39,9 +39,10 @@ privateApi.interceptors.response.use(
       await SecureStore.deleteItemAsync('accessToken');
       await SecureStore.deleteItemAsync('user');
     }
+    console.log(error.response.data)
 
     const message =
-      error.response?.data?.error ||    // ← add this, matches { "error": "..." }
+      error.response?.data?.error ||
       error.response?.data?.message ||
       error.message;
     return Promise.reject(new Error(message));
@@ -53,7 +54,7 @@ publicApi.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const message =
-      error.response?.data?.error ||    // ← add this, matches { "error": "..." }
+      error.response?.data?.error ||
       error.response?.data?.message ||
       error.message;
     return Promise.reject(new Error(message));

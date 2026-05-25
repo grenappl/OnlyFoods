@@ -11,11 +11,12 @@ import {
   BookOpen,
   BookHeart,
   Shield,
+  UserX,
 } from 'lucide-react-native';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import ProfileItem from '@/components/profile/ProfileItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StatTooltip, { STAT_TOOLTIPS } from '@/components/profile/StatToolTip';
 import EditProfileModal from '@/components/profile/EditProfileModal';
 import useFavorites from '@/hooks/useFavorites';
@@ -26,6 +27,8 @@ import { ChangePasswordContent } from '@/components/profile/ChangePasswordConten
 import { LogOutContent } from '@/components/profile/LogoutContent';
 import { PrivacyContent } from '@/components/profile/PrivacyContent';
 import { HelpSupportContent } from '@/components/profile/HelpSupportContent';
+import { privateApi } from '@/utils/api';
+import DeactivateAccountContent from '@/components/profile/DeactivateAccountContent';
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -70,7 +73,7 @@ export default function ProfilePage() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>();
-  const [pfp, setPfp] = useState(auth?.user?.pfp);
+  const [pfp, setPfp] = useState<string | undefined>(auth.user?.avatar_url);
 
   const [tooltip, setTooltip] = useState<StatTooltipProps | null>(null);
 
@@ -78,6 +81,23 @@ export default function ProfilePage() {
     setModalContent(content)
     setModalVisible(true);
   }
+
+  const getSavedCount = () => {
+    let total = 0;
+    recipes.forEach(r => {
+      total += r.favorites
+    })
+    return total
+  }
+
+  useEffect(() => {
+    // const getPfp = async () => {
+    //   const res = await privateApi.get('/profiles/me')
+    //   setPfp(res.data.avatar_url)
+    // }
+    // getPfp()
+    console.log(auth.user)
+  }, [])
 
   return (
     <ScrollView
@@ -88,8 +108,8 @@ export default function ProfilePage() {
       <View className="px-5 pt-16">
         {/* Avatar + user info */}
         <View className="items-center mb-5">
-          {pfp ||
-            // <Image source={require({ uri: pfp })} className="size-24 rounded-full mb-4" resizeMode="cover" />:
+          {pfp ?
+            <Image source={{ uri: pfp }} className="size-24 rounded-full mb-4" resizeMode="cover" /> :
             <View className="size-24 rounded-full bg-primary-500 items-center justify-center mb-4 shadow-md">
               <User size={44} color="white" />
             </View>}
@@ -111,7 +131,7 @@ export default function ProfilePage() {
           />
           <StatCard
             icon={<Heart color="#FB4141" />}
-            count={1}
+            count={getSavedCount()}
             title="Saves"
             onPress={() => setTooltip(() => STAT_TOOLTIPS.Saves)}
           />
@@ -134,25 +154,25 @@ export default function ProfilePage() {
         <ProfileItem
           icon={<User size={20} color="#2ECC71" />}
           label="Edit Profile"
-          onPress={() => openModal(<EditProfileContent />)}
+          onPress={() => openModal(<EditProfileContent setModalVisible={setModalVisible} setPfp={setPfp}/>)}
         />
-        <ProfileItem
+        {/* <ProfileItem
           icon={<Bell size={20} color="#F39C12" />}
           label="Notifications"
           onPress={() => openModal(<NotificationsContent />)}
-        />
+        /> */}
         <ProfileItem
           icon={isDark ?
-            <Moon size={18} color={isDark ? '#9CA3AF' : "#4B5563"} /> :
-            <Sun size={18} color={isDark ? '#9CA3AF' : "#4B5563"} />}
+            <Moon size={18} color="#F39C12" /> :
+            <Sun size={18} color="#F39C12" />}
           label={isDark ? 'Dark Mode' : 'Light Mode'}
           onPress={toggleTheme}
         />
-        <ProfileItem
+        {/* <ProfileItem
           icon={<Lock size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Privacy"
           onPress={() => openModal(<PrivacyContent />)}
-        />
+        /> */}
         <ProfileItem
           icon={<Shield size={20} color={isDark ? '#9CA3AF' : "#4B5563"} />}
           label="Change Password"
@@ -171,6 +191,12 @@ export default function ProfilePage() {
           icon={<LogOut size={20} color="#FB4141" />}
           label="Log Out"
           onPress={() => openModal(<LogOutContent />)}
+          danger
+        />
+        <ProfileItem
+          icon={<UserX size={20} color="#FB4141" />}
+          label="Deactivate Account"
+          onPress={() => openModal(<DeactivateAccountContent />)}
           danger
         />
 

@@ -67,22 +67,9 @@ export default function DiscoverPage() {
       const fav = [...res.data]
       fav.forEach((f: {recipes: RecipeType}, index) => {
         const r = {...f.recipes};
-        fav[index] = {
-          id: r.id,
-          name: r.title,
-          description: r.description,
-          ingredients: r.ingredients,
-          instructions: r.steps,
-          cuisineType: r.cuisine_type,
-          cookTime: r.cook_time_minutes,
-          servings: r.servings,
-          // "isPublic": r.is_published,
-          favorites: r.favorites_count,
-          // authorId: r.author_id,
-          // createdAt: r.created_at"
-        }
-      });
-      console.log(fav)
+        fav[index] = formatRecipe(r);
+      })
+      console.log(fav);
       setFavorites(fav);
     } catch (e) {
       console.log('FAV: ' + e)
@@ -90,8 +77,8 @@ export default function DiscoverPage() {
   };
 
   useEffect(() => {
-    fetchRecipes();
     loadFavorites();
+    fetchRecipes();
   }, [])
 
   return (
