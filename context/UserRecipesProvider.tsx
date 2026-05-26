@@ -158,7 +158,6 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         console.log('Backend deletion status:', res.message);
       }
 
-      console.log('Backend deletion status:', res.message);
 
       setRecipes((prev) => prev.filter((r) => r.id !== id));
     } catch (e: any) {
