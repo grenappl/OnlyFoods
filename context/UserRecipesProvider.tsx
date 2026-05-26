@@ -137,10 +137,35 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const updateRecipe = async (id: number, updated: Partial<RecipeType>) => {
+  const updateRecipe = async (
+    id: number,
+    updated: Partial<RecipeType>,
+    imagePayload?: { uri: string; name: string; type: string } | null
+  ) => {
     try {
       const res = await privateApi.put(`/recipes/update/${id}`, updated);
       console.log('Server update response:', res.data);
+      if (imagePayload) {
+        // Fetch the recipe to get the existing media id
+        const recipeRes = await privateApi.get(`/recipes/${id}`);
+        const existingMedia = recipeRes.data.recipe_media;
+        console.log('Existing media: ', existingMedia);
+        await Promise.all(
+          existingMedia.map((m: any) => privateApi.delete(`/recipes/${id}/media/${m.id}`))
+        );
+
+        const formData = new FormData();
+        formData.append('file', {
+          uri: imagePayload.uri,
+          name: imagePayload.name,
+          type: imagePayload.type,
+        } as any);
+
+        const uploadRes = await privateApi.post(`/recipes/${id}/media`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        console.log('Upload response:', uploadRes.data);
+      }
 
       await loadUserRecipes();
     } catch (e) {
@@ -162,7 +187,6 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
       setRecipes((prev) => prev.filter((r) => r.id !== id));
     } catch (e: any) {
-      // 🔴 ERROR: The backend returned 401, 403, 404, or 500
       if (e.response?.data) {
         // Look for ".error" because your team's docs show errors use the "error" key!
         const backendError = e.response.data.error || 'Unknown server error';
