@@ -149,8 +149,35 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     //setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
   };
 
-  const removeRecipe = (id: number) => {
-    setRecipes((prev) => prev.filter((r) => r.id !== id));
+  const removeRecipe = async (id: number) => {
+    try {
+      // 1. Make the authenticated network call to delete it from the database
+      const res = await privateApi.delete(`/recipes/${id}`);
+      console.log('delete: ', res.data);
+      if (res) {
+        console.log('Backend deletion status:', res.message);
+      }
+
+      console.log('Backend deletion status:', res.message);
+
+      setRecipes((prev) => prev.filter((r) => r.id !== id));
+    } catch (e: any) {
+      // 🔴 ERROR: The backend returned 401, 403, 404, or 500
+      if (e.response?.data) {
+        // Look for ".error" because your team's docs show errors use the "error" key!
+        const backendError = e.response.data.error || 'Unknown server error';
+        console.error(`Archiving failed with status ${e.response.status}:`, backendError);
+
+        // Optional: If you have detailed database debugging info sent by your friend:
+        if (e.response.data.details) {
+          console.error('Backend Dev Details:', e.response.data.details);
+        }
+      } else {
+        // Fallback for absolute network failures (e.g., local server is turned off)
+        console.error('Network/Server connection failed:', e.message || e);
+      }
+      //throw e; // Pass the error up so your UI can display a message if needed
+    }
   };
 
   const getRecipeById = (id: number) => {
