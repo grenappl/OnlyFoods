@@ -49,5 +49,11 @@ The app focuses on simplicity, personalization, and user experience, making it e
 
 ## Project Structure
 ```
-WIP
+OnlyFoods/
+├── app/                    # Expo Router file-based navigation screens
+├── assets/                 # Static assets (images, fonts, icons)
+├── components/             # Reusable UI components shared across screens
+├── context/                # React Context providers for global state (auth, theme, favorites)
+├── hooks/                  # Custom React hooks that consume context or encapsulate logic
+└── utils/                  # Helper functions, constants, API clients, and static data
 ```
