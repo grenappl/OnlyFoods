@@ -3,6 +3,7 @@ import { RecipeType } from "./Recipes"
 const formatRecipe = (r) => {
 	return {
 		id: r.id,
+		authorId: r.author_id,
 		name: r.title,
 		description: r.description,
 		ingredients: r.ingredients,

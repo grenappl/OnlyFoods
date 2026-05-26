@@ -44,7 +44,6 @@ export default function Login() {
         password: password,
       });
       const resUser = await privateApi.get('/profiles/me');
-      console.log(resToken)
       setAuth({
         user: resUser.data,
         accessToken: resToken.access_token,

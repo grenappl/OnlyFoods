@@ -1,4 +1,5 @@
 import axios from "axios";
+import { router } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL
@@ -24,6 +25,9 @@ privateApi.interceptors.request.use(
     }
     if(config.url === '/profiles/me/avatar'){
       config.headers["Content-Type"] = "multipart/form-data"
+    }
+    if(config.url === '/recommendations'){
+      config.headers["Content-Type"] = "application/json"
     }
     return config;
   },

@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setAuth({ accessToken: token, user: JSON.parse(userRaw) });
         }
       } catch (e) {
-        console.error('Failed to load auth:', e);
+        console.log('Failed to load auth:', e);
       } finally {
         setIsLoading(false);
       }
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           await SecureStore.deleteItemAsync('user');
         }
       } catch (e) {
-        console.error('Failed to save auth:', e);
+        console.log('Failed to save auth:', e);
       }
     };
     saveAuth();

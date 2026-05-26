@@ -1,10 +1,20 @@
+import ErrorModal from '@/components/ErrorModal';
+import useAuth from '@/hooks/useAuth';
+import useRecipes from '@/hooks/useRecipes';
 import useTheme from '@/hooks/useTheme';
 import { privateApi } from '@/utils/api';
+import formatRecipe from '@/utils/formatRecipe';
+import { router } from 'expo-router';
 import { ChefHat, Clock, PlusCircle, Search, Users, Utensils, X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 
-const COOK_TIMES = ['Any Time', 'Under 30 min', '30-60 min', 'Over 60 min'];
+const COOK_TIMES = [
+  'Any Time', 
+  'Under 30 min', 
+  '30-60 min', 
+  'Over 60 min'
+];
 const SERVING_SIZES = [
   'Any Serving',
   '1 Serving',
@@ -19,10 +29,25 @@ const CUISINES = [
   'Korean', 'Mexican', 'Spanish', 'Thai'
 ];
 
+const servings_map = [
+  "",
+  "1",
+  "2_to_3",
+  "4_to_5",
+  "6_to_7",
+  "8_plus",
+]
+const cook_time_map = [
+  "",
+  "under_30",
+  "30_to_60",
+  "over_60"
+]
+
 export default function FilterPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [cookTimeRange, setCookTimeRange] = useState<string>(COOK_TIMES[0]);
-  const [servingSizeRange, setServingSizeRange] = useState<string>(SERVING_SIZES[0]);
+  const [cookTimeRange, setCookTimeRange] = useState<string>(cook_time_map[0]);
+  const [servingSizeRange, setServingSizeRange] = useState<string>(servings_map[0]);
 
   const [ingredientInput, setIngredientInput] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
@@ -31,6 +56,11 @@ export default function FilterPage() {
 
   const { isDark } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+  const { auth } = useAuth()
+  const { setFeedRecipes } = useRecipes();
+
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const cuisineTypesList = useMemo(() => {
     if (!cuisineSearch.trim()) return [];
@@ -58,11 +88,16 @@ export default function FilterPage() {
   const removeCuisine = (cuisine: string) => {
     setSelectedCuisines((prev) => prev.filter((c) => c !== cuisine));
   };
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setErrorVisible(true);
+    return false;
+  };
 
   const resetFilters = () => {
     setSearchQuery('');
-    setCookTimeRange(COOK_TIMES[0]);
-    setServingSizeRange(SERVING_SIZES[0]);
+    setCookTimeRange(cook_time_map[0]);
+    setServingSizeRange(servings_map[0]);
     setIngredients([])
     setCuisineSearch('')
     setSelectedCuisines([])
@@ -70,10 +105,35 @@ export default function FilterPage() {
   const handleFilters = async () => {
     setIsLoading(true);
     try {
-      const res = await privateApi.get('/recipes') // placeholder
-      console.log(res)
-    } catch (e) {
-      console.log(e)
+      const payload: any = {
+        n: 5,
+        user_id: auth.user?.id, // add your user_id here
+      };
+
+    if (selectedCuisines.length > 0) payload.cuisine_types = selectedCuisines;
+    if (cookTimeRange && cookTimeRange !== "") payload.cook_time = cookTimeRange;
+    if (servingSizeRange && servingSizeRange !== "") payload.servings = servingSizeRange;
+    if (ingredients.length > 0) payload.ingredients = ingredients;
+
+      console.log(payload);
+      const res = await privateApi.post('/recommendations', payload);
+      console.log(res.recommendations);
+      if(res.recommendations.length === 0) throw new Error('No recipes were found!')
+      const recipeData = [...res.recommendations];
+      recipeData.forEach((r, index) => {
+        recipeData[index] = formatRecipe(r.recipe);
+      })
+      setFeedRecipes(recipeData);
+      router.replace('/Discover')
+    } catch (e: any) {
+      const message = 
+        e?.response?.data?.error ||
+        e?.response?.data?.message ||
+        (Array.isArray(e?.response?.data) ? e.response.data.join(', ') : null) ||
+        (typeof e === 'string' ? e : null) ||
+        e?.message ||
+        'Something went wrong';
+      showError(message);
     } finally {
       setIsLoading(false);
     }
@@ -203,12 +263,12 @@ export default function FilterPage() {
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Cook Time</Text>
           </View>
           <View className="flex-row flex-wrap gap-2">
-            {COOK_TIMES.map((time) => {
-              const isSelected = cookTimeRange === time;
+            {COOK_TIMES.map((time, index) => {
+              const isSelected = cookTimeRange === cook_time_map[index];
               return (
                 <TouchableOpacity
                   key={time}
-                  onPress={() => setCookTimeRange(time)}
+                  onPress={() => setCookTimeRange(cook_time_map[index])}
                   style={{ width: '48%' }}
                   className={`rounded-xl border px-5 py-3 ${
                     isSelected
@@ -239,12 +299,12 @@ export default function FilterPage() {
             <Text className="text-sm text-text-500 dark:text-text-dark-800">Serving Size</Text>
           </View>
           <View className="flex-row flex-wrap gap-2">
-            {SERVING_SIZES.map((size) => {
-              const isSelected = servingSizeRange === size;
+            {SERVING_SIZES.map((size, index) => {
+              const isSelected = servingSizeRange === servings_map[index];
               return (
                 <TouchableOpacity
                   key={size}
-                  onPress={() => setServingSizeRange(size)}
+                  onPress={() => setServingSizeRange(servings_map[index])}
                   style={{ width: '48%' }}
                   className={`rounded-xl border px-5 py-3 ${
                     isSelected
@@ -334,6 +394,12 @@ export default function FilterPage() {
             <Text className="text-base font-semibold text-white">Reset Filter</Text>
           </TouchableOpacity>
         </View>
+
+        <ErrorModal
+          visible={errorVisible}
+          message={errorMessage}
+          onClose={() => setErrorVisible(false)}
+        />
       </View>
     </ScrollView>
   );

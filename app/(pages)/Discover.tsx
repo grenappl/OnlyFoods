@@ -11,13 +11,14 @@ import { privateApi } from '@/utils/api';
 import useRecipes from '@/hooks/useRecipes';
 import useTheme from '@/hooks/useTheme';
 import formatRecipe from '@/utils/formatRecipe';
+import useAuth from '@/hooks/useAuth';
 
 export default function DiscoverPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeType | null>(null);
-  const [feedRecipes, setFeedRecipes] = useState<RecipeType[]>([]);
-  const { recipes } = useRecipes()
+  const { recipes, feedRecipes, setFeedRecipes } = useRecipes()
+  const {auth} = useAuth()
 
   const cardRef = useRef<RecipeCardRef>(null);
   const { favorites, addFavorite, setFavorites } = useFavorites()
@@ -38,23 +39,23 @@ export default function DiscoverPage() {
     cardRef.current?.triggerSwipe(direction);
   };
 
-  // temp
-  const handleRefresh = () => {
-    const filteredRecipes = RECIPES.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
-    setFeedRecipes(filteredRecipes)
-    setCurrentIndex(0)
-  }
-
   const fetchRecipes = async () => {
     try {
       setNetworkError(false)
-      const res = await privateApi.get('/recipes')
-      const recipeData = [...res.data];
-      recipeData.forEach((r, index) => {
-        recipeData[index] = formatRecipe(r);
+      console.log(await privateApi.post('/recommendations/train'))
+      const res = await privateApi.post('/recommendations', {
+        user_id: auth.user?.id,
+        n: 10, 
       })
-      const filteredRecipes = recipeData.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
-      setFeedRecipes(filteredRecipes)
+      console.log(res)
+      // const res = await privateApi.get('/recipes')
+      const recipeData = [...res.recommendations];
+      console.log(recipeData)
+      recipeData.forEach((r, index) => {
+        recipeData[index] = formatRecipe(r.recipe);
+      })
+      // const filteredRecipes = recipeData.filter(r => (!favorites.includes(r) && !recipes.includes(r)))
+      setFeedRecipes(recipeData)
     } catch (e) {
       setNetworkError(true)
       console.log(e)
@@ -72,7 +73,7 @@ export default function DiscoverPage() {
       console.log(fav);
       setFavorites(fav);
     } catch (e) {
-      console.log('FAV: ' + e)
+      console.log(e)
     }
   };
 

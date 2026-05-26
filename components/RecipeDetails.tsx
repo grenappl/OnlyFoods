@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import {
   Dot,
   Heart,
   Info,
+  UserCircle2,
   Users,
   Utensils,
   X,
@@ -24,6 +25,7 @@ import {
 import { scheduleOnRN } from 'react-native-worklets';
 import useTheme from '@/hooks/useTheme';
 import { RecipeType } from '@/utils/Recipes';
+import { publicApi } from '@/utils/api';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const DISMISS_THRESHOLD = 120;
@@ -37,18 +39,24 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
   const { isDark } = useTheme();
-  console.log('Recipe in selected: ', recipe);
   const handleClose = () => {
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 350 }, (finished) => {
       if (finished) scheduleOnRN(onClose);
     });
     backdropOpacity.value = withTiming(0, { duration: 350 });
   };
+  const [profile, setProfile] = useState({});
 
   useEffect(() => {
     if (recipe) {
+      const getProfile = async () => {
+        const res = await publicApi.get(`/profiles/${recipe.authorId}`)
+        setProfile(res.data)
+      }
+
       translateY.value = withTiming(0, { duration: 350 });
       backdropOpacity.value = withTiming(0.5, { duration: 300 });
+      getProfile();
     }
   }, [recipe]);
 
@@ -144,6 +152,40 @@ export default function RecipeDetailSheet({ recipe, onClose }: RecipeDetailSheet
 
           {/* Content */}
           <View className="p-5">
+            {/* Creator */}
+            <View className="flex-row gap-3">
+              <UserCircle2 color={isDark ? '#F9FAFB' : '#111827'} />
+              <Text className="text-text mb-3 text-xl font-semibold text-text-900 dark:text-text-dark-900">
+                Creator
+              </Text>
+            </View>
+            <View className="mb-8 rounded-2xl bg-background-200 p-4 dark:bg-background-dark-100">
+              <View className="flex-row items-center gap-4">
+                {/* Avatar */}
+                <View className="size-14 overflow-hidden rounded-full bg-primary-500 items-center justify-center">
+                  {profile.avatar_url ? (
+                    <Image
+                      source={{ uri: profile.avatar_url }}
+                      className="h-full w-full"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Text className="text-xl font-bold text-white">
+                      {profile.name?.charAt(0)?.toUpperCase() ?? '?'}
+                    </Text>
+                  )}
+                </View>
+                <View className="flex-1">
+                  <Text className="text-lg font-medium text-text-900 dark:text-text-dark-900">
+                    {profile.name ?? 'Unknown Chef'}
+                  </Text>
+                  <Text className="text-sm font-normal text-text-700 dark:text-text-dark-700">
+                    {profile.email}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
             <View className="flex-row gap-3">
               <Info color={isDark ? '#F9FAFB' : '#111827'} />
               <Text className="text-text mb-2 text-xl font-semibold text-text-900 dark:text-text-dark-900">

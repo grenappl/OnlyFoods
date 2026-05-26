@@ -16,6 +16,8 @@ interface RecipesContextType {
   updateRecipe: (id: number, recipe: Partial<RecipeType>) => void;
   removeRecipe: (id: number) => void;
   getRecipeById: (id: number) => RecipeType | undefined;
+  feedRecipes: RecipeType[];
+  setFeedRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>
 }
 
 export const UserRecipesContext = createContext<RecipesContextType>({
@@ -24,10 +26,13 @@ export const UserRecipesContext = createContext<RecipesContextType>({
   updateRecipe: () => {},
   removeRecipe: () => {},
   getRecipeById: () => undefined,
+  feedRecipes: [],
+  setFeedRecipes: () => {}
 });
 
 export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
+  const [feedRecipes, setFeedRecipes] = useState<RecipeType[]>([]);
   const { auth } = useAuth();
 
   // Load recipes on app start
@@ -210,7 +215,7 @@ export const UserRecipesProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   return (
     <UserRecipesContext.Provider
-      value={{ recipes, addRecipe, updateRecipe, removeRecipe, getRecipeById }}>
+      value={{ recipes, addRecipe, updateRecipe, removeRecipe, getRecipeById, feedRecipes, setFeedRecipes }}>
       {children}
     </UserRecipesContext.Provider>
   );

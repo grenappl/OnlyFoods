@@ -5,13 +5,13 @@ import { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 function DeactivateAccountContent() {
-  const { logout } = useAuth();
+  const { setAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
 		setIsLoading(true);
-		await logout();
-		await privateApi.patch('/profiles/deactivate')
+		await privateApi.patch('/profiles/deactivate');
+    setAuth({})
 		router.replace('/Login');
   };
   
