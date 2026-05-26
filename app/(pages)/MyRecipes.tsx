@@ -236,7 +236,7 @@ export default function MyRecipesPage() {
             <View
               className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-green-300 shadow-lg shadow-green-500/30"
               style={{ backgroundColor: isDark ? '#0b7a29' : '#1F2A38' }}>
-              <Plus size={35} color={isDark ? '#23da3e' : '#1F2A38'} />
+              <Plus size={35} color={isDark ? '#1F2A38' : '#23da3e'} />
             </View>
 
             <Text className="text-1xl mb-2 font-bold text-text-800 dark:text-text-dark-800">
