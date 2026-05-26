@@ -179,7 +179,7 @@ export default function RecipeEditorPage() {
       };
     }
     if (isEditing) {
-      await updateRecipe(Number(id), recipe);
+      await updateRecipe(Number(id), recipe, imageFilePayload);
     } else {
       console.log('imageFilePayload: ', imageFilePayload);
       await addRecipe(recipe, imageFilePayload);
